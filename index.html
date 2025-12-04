@@ -36,80 +36,96 @@
           <a href="contact.html" class="btn btn-outline">Contact Us</a>
         </div>
       </div>
-      <!DOCTYPE html>
+   <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Image Search</title>
+
   <style>
-    class {
+    /* Main Wrapper */
+    .app {
       font-family: Arial, sans-serif;
-      background: #;
+      background: #f5f5f5;
       text-align: center;
-      padding: 30px;
+      padding: 30px 15px;
     }
-    h1 {
-      color: #000000;
+
+    h2 {
+      color: #000;
       margin-bottom: 20px;
     }
+
     input {
       padding: 10px;
-      width: 400px;
-      border: 1px solid #000000;
+      width: 360px;
+      max-width: 90%;
+      border: 1px solid #000;
       border-radius: 8px;
       font-size: 16px;
+      outline: none;
     }
+
     button {
       padding: 10px 140px;
       font-size: 16px;
-      border: 2px;
+      border: none;
       border-radius: 8px;
-      background-color: #000000;
+      background-color: #000;
       color: white;
       cursor: pointer;
-      margin-left: 8px;
+      margin-top: 10px;
     }
-    button:hover {
-      background-color: #000000;
-    }
+
     #gallery {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 15px;
       margin-top: 30px;
-    }
-    .photo-card {
-      background: white;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      width: 280px;
-      transition: transform 0.3s;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
     }
+
+    /* Horizontal Image Card */
+    .photo-card {
+      width: 95%;
+      max-width: 600px;
+      background: white;
+      display: flex;
+      flex-direction: row;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+      transition: 0.3s;
+    }
+
     .photo-card:hover {
-      transform: translateY(-5px);
+      transform: translateY(-4px);
     }
+
+    /* Image on Left */
     .photo-card img {
-      width: 150%;
-      height: 180px;
+      width: 40%;
+      height: 160px;
       object-fit: cover;
     }
+
+    /* Right Info Section */
     .photo-info {
-      padding: 10px;
+      padding: 12px;
+      width: 60%;
+      text-align: left;
     }
+
     .photo-info a {
       text-decoration: none;
       color: #0C0C0D;
       font-weight: bold;
     }
+
     .download-btn {
       display: inline-block;
-      margin-top: 8px;
+      margin-top: 10px;
       background: #F09E3C;
       color: white;
       padding: 6px 10px;
@@ -118,24 +134,47 @@
       text-decoration: none;
       transition: 0.3s;
     }
+
     .download-btn:hover {
-      background: #E8A758;
+      background: #E88A22;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 480px) {
+      .photo-card {
+        flex-direction: column;
+      }
+      .photo-card img {
+        width: 100%;
+        height: 180px;
+      }
+      .photo-info {
+        width: 100%;
+      }
+      button {
+        width: 100%;
+        padding: 10px 0;
+      }
     }
   </style>
 </head>
-<class>
-  <h2>"Everyone Image,One Click Away" </h2>
+
+<body class="app">
+
+  <h2>"Everyone Image, One Click Away"</h2>
 
   <input id="searchInput" type="text" placeholder="Search images (e.g. nature, car, city)">
-  <br> <br>
+  <br><br>
   <button id="searchBtn">Search</button>
 
   <div id="gallery"></div>
 
   <script>
-    const accessKey = "TnQEK1nmd8984iq5wl69lQyXABZchMGd8ZZAt0iVOm0"; // ⚠️ Replace with your Unsplash Access Key
+    const accessKey = "TnQEK1nmd8984iq5wl69lQyXABZchMGd8ZZAt0iVOm0";
 
-    document.getElementById("searchBtn").addEventListener("click", () => {
+    document.getElementById("searchBtn").addEventListener("click", searchPhotos);
+
+    function searchPhotos() {
       const query = document.getElementById("searchInput").value.trim();
       if (!query) {
         alert("Please enter a search term!");
@@ -158,26 +197,23 @@
           data.results.forEach(photo => {
             gallery.innerHTML += `
               <div class="photo-card">
-                <img src="${photo.urls.small}" alt="${photo.alt_description || 'Unsplash Photo'}">
+                <img src="${photo.urls.small}" alt="Image">
                 <div class="photo-info">
                   <p>By <a href="${photo.user.links.html}" target="_blank">@${photo.user.username}</a></p>
-                  <a class="download-btn" href="${photo.links.download}" target="_blank" download>⬇ Download</a>
+                  <a class="download-btn" href="${photo.links.download}" target="_blank">⬇ Download</a>
                 </div>
               </div>
             `;
           });
         })
         .catch(err => {
-          console.error("Error fetching images:", err);
           document.getElementById("gallery").innerHTML = "<p>Something went wrong 😕</p>";
         });
-    });
+    }
   </script>
-</class>
 
 
-
-      <div class="hero-card">
+<div class="hero-card">
         <h2>Quick Highlights</h2>
         <p>Use this box to show a short introduction, latest news, or a feature of your site.</p>
         <ul style="margin-top:10px; padding-left:18px; font-size:0.9rem; color:#4b5563;">
