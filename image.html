@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Search</title>
+  <style>
+    class {
+      font-family: Arial, sans-serif;
+      background: #;
+      text-align: center;
+      padding: 30px;
+    }
+    h1 {
+      color: #000000;
+      margin-bottom: 20px;
+    }
+    input {
+      padding: 10px;
+      width: 360px;
+      border: 1px solid #000000;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 140px;
+      font-size: 16px;
+      border: 2px;
+      border-radius: 8px;
+      background-color: #000000;
+      color: white;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    button:hover {
+      background-color: #000000;
+    }
+    #gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 30px;
+    }
+    .photo-card {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      width: 280px;
+      transition: transform 0.3s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .photo-card:hover {
+      transform: translateY(-5px);
+    }
+    .photo-card img {
+      width: 150%;
+      height: 180px;
+      object-fit: cover;
+    }
+    .photo-info {
+      padding: 10px;
+    }
+    .photo-info a {
+      text-decoration: none;
+      color: #0C0C0D;
+      font-weight: bold;
+    }
+    .download-btn {
+      display: inline-block;
+      margin-top: 8px;
+      background: #F09E3C;
+      color: white;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 14px;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+    .download-btn:hover {
+      background: #E8A758;
+    }
+  </style>
+</head>
+<class>
+  <h2>"Everyone Image,One Click Away" </h2>
+
+  <input id="searchInput" type="text" placeholder="Search images (e.g. nature, car, city)">
+  <br> <br>
+  <button id="searchBtn">Search</button>
+
+  <div id="gallery"></div>
+
+  <script>
+    const accessKey = "TnQEK1nmd8984iq5wl69lQyXABZchMGd8ZZAt0iVOm0"; // ⚠️ Replace with your Unsplash Access Key
+
+    document.getElementById("searchBtn").addEventListener("click", () => {
+      const query = document.getElementById("searchInput").value.trim();
+      if (!query) {
+        alert("Please enter a search term!");
+        return;
+      }
+
+      const url = `https://api.unsplash.com/search/photos?query=${query}&per_page=12&client_id=${accessKey}`;
+
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          const gallery = document.getElementById("gallery");
+          gallery.innerHTML = "";
+
+          if (data.results.length === 0) {
+            gallery.innerHTML = "<p>No images found 😢</p>";
+            return;
+          }
+
+          data.results.forEach(photo => {
+            gallery.innerHTML += `
+              <div class="photo-card">
+                <img src="${photo.urls.small}" alt="${photo.alt_description || 'Unsplash Photo'}">
+                <div class="photo-info">
+                  <p>By <a href="${photo.user.links.html}" target="_blank">@${photo.user.username}</a></p>
+                  <a class="download-btn" href="${photo.links.download}" target="_blank" download>⬇ Download</a>
+                </div>
+              </div>
+            `;
+          });
+        })
+        .catch(err => {
+          console.error("Error fetching images:", err);
+          document.getElementById("gallery").innerHTML = "<p>Something went wrong 😕</p>";
+        });
+    });
+  </script>
+</class>
+</html>
