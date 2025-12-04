@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Website - Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header>
+  <div class="container navbar">
+    <div class="logo">My Website</div>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact Us</a></li>
+        <li><a href="login.html">Login</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+    <h1 class="section-title">Login</h1>
+    <p class="section-subtitle">Enter your credentials to access your account.</p>
+
+    <div class="form-wrapper">
+      <form action="#" method="post">
+        <div class="form-group">
+          <label for="username">Email or Username</label>
+          <input id="username" type="text" name="username"
+                 placeholder="Enter email or username" required />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input id="password" type="password" name="password"
+                 placeholder="Enter your password" required />
+        </div>
+
+        <div class="form-group" style="display:flex; justify-content:space-between; align-items:center; font-size:0.85rem;">
+          <div>
+            <input type="checkbox" id="remember" name="remember" />
+            <label for="remember" style="display:inline;"> Remember me</label>
+          </div>
+          <a href="#" style="text-decoration:none;">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width:100%; margin-top:5px;">Login</button>
+      </form>
+
+      <p style="font-size:0.85rem; text-align:center; margin-top:10px;">
+        Don’t have an account? <a href="#" style="text-decoration:none;">Sign up</a>
+      </p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    &copy; 2025 My Website. All rights reserved.
+  </div>
+</footer>
+
+</body>
+</html>
