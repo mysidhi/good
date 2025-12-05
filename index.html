@@ -7,20 +7,43 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <script>
+  const menuBtn = document.querySelector(".menu-toggle");
+  const navLinks = document.querySelector(".nav-links");
 
+  menuBtn.addEventListener("click", () => {
+    navLinks.classList.toggle("open");
+    menuBtn.classList.toggle("is-open");
+  });
+</script>
 <header>
-  <div class="container navbar">
-    <div class="logo">My Work.com</div>
-    <nav>
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="about.html">About</a></li>
-        <li><a href="contact.html">Contact Us</a></li>
-        <li><a href="login.html">Login</a></li>
-      </ul>
-    </nav>
+  <div class="container">
+    <div class="navbar">
+      <div class="logo">
+        My<span>Site</span>
+      </div>
+
+      <!-- Menu Icon -->
+      <button class="menu-toggle" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <!-- Nav Links -->
+      <nav class="nav-links">
+        <ul>
+          <li><a href="#" class="active">Home</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Services</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
   </div>
 </header>
+
+
 
 <main>
   <div class="container">
