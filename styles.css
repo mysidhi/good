@@ -33,32 +33,6 @@ body {
     var(--bg-body);
   color: var(--text-main);
 }
-/* Reset and base styles */
-
-/* CSS Variables */
-:root {
-  --electric-border-color: #dd8448;
-  --electric-light-color: oklch(from var(--electric-border-color) l c h);
-  --gradient-color: oklch(
-    from var(--electric-border-color) 0.3 calc(c / 2) h / 0.4
-  );
-  --color-neutral-900: oklch(0.185 0 0);
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: system-ui, -apple-system, sans-serif;
-  background-color: oklch(0.145 0 0);
-  color: oklch(0.985 0 0);
-  height: 100vh;
-  overflow: hidden;
-}
-
 
 /* ===== Header & Navigation ===== */
 header {
@@ -418,4 +392,4 @@ footer {
   .btn-group {
     flex-direction: column;
   }
-} 
+} improve the css code and menu icon and use best color look good 
