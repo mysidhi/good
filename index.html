@@ -1,372 +1,429 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Work with My Sidhi</title>
-    <link rel="style.css" href="style.css">
-<style>
-*{
-    margin: 0;
-    padding: 0;
-}
 
-.main{
-    width: 100%;
-    background: linear-gradient(to top, rgba
+    <!-- Responsive Meta Tag -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-(0,0,0,0.5)50%,rgba(0,0,0,0.5)50%), url(1.jpg);
-    background-position: center;
-    background-size: cover;
-    height: 100vh;
-}
+    <!-- (Optional) External CSS
+    <link rel="stylesheet" href="style.css">
+    -->
 
-.navbar{
-    width: 1200px;
-    height: 75px;
-    margin: auto;
-}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-.icon{
-    width: 200px;
-    float: left;
-    height: 70px;
-}
+        body {
+            font-family: Arial, sans-serif;
+        }
 
-.logo{
-    color: #ff7200;
-    font-size: 35px;
-    font-family: Arial;
-    padding-left: 20px;
-    float: left;
-    padding-top: 10px;
-    margin-top: 5px
-}
+        .main {
+            min-height: 100vh;
+            width: 100%;
+            background: linear-gradient(
+                to top,
+                rgba(0, 0, 0, 0.5) 50%,
+                rgba(0, 0, 0, 0.5) 50%
+            ), url("1.jpg");
+            background-position: center;
+            background-size: cover;
+            color: #fff;
+        }
 
-.menu{
-    width: 400px;
-    float: left;
-    height: 70px;
-}
+        /* ===== NAVBAR ===== */
+        .navbar {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap; /* important for small screens */
+        }
 
-ul{
-    float: left;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+        .icon .logo {
+            color: #ff7200;
+            font-size: 30px;
+            font-weight: bold;
+        }
 
-ul li{
-    list-style: none;
-    margin-left: 62px;
-    margin-top: 27px;
-    font-size: 14px;
-}
+        .menu {
+            display: flex;
+            align-items: center;
+        }
 
-ul li a{
-    text-decoration: none;
-    color: #fff;
-    font-family: Arial;
-    font-weight: bold;
-    transition: 0.4s ease-in-out;
-}
+        .menu ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
 
-ul li a:hover{
-    color: #ff7200;
-}
+        .menu ul li a {
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+            font-size: 14px;
+            transition: 0.3s;
+        }
 
-.search{
-    width: 330px;
-    float: left;
-    margin-left: 270px;
-}
+        .menu ul li a:hover {
+            color: #ff7200;
+        }
 
-.srch{
-    font-family: 'Times New Roman';
-    width: 200px;
-    height: 40px;
-    background: transparent;
-    border: 1px solid #ff7200;
-    margin-top: 13px;
-    color: #fff;
-    border-right: none;
-    font-size: 16px;
-    float: left;
-    padding: 10px;
-    border-bottom-left-radius: 5px;
-    border-top-left-radius: 5px;
-}
+        .search {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-top: 10px;
+        }
 
-.btn{
-    width: 100px;
-    height: 40px;
-    background: #ff7200;
-    border: 2px solid #ff7200;
-    margin-top: 13px;
-    color: #fff;
-    font-size: 15px;
-    border-bottom-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-    transition: 0.2s ease;
-    cursor: pointer;
-}
-.btn:hover{
-    color: #000;
-}
+        .srch {
+            font-family: 'Times New Roman';
+            width: 200px;
+            height: 40px;
+            background: transparent;
+            border: 1px solid #ff7200;
+            color: #fff;
+            font-size: 16px;
+            padding: 0 10px;
+            border-right: none;
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+        }
 
-.btn:focus{
-    outline: none;
-}
+        .srch::placeholder {
+            color: #ddd;
+        }
 
-.srch:focus{
-    outline: none;
-}
+        .btn {
+            width: 100px;
+            height: 40px;
+            background: #ff7200;
+            border: 1px solid #ff7200;
+            color: #fff;
+            font-size: 15px;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
 
-.content{
-    width: 1200px;
-    height: auto;
-    margin: auto;
-    color: #fff;
-    position: relative;
-}
+        .btn:hover {
+            color: #000;
+            background: #ffa24a;
+        }
 
-.content .par{
-    padding-left: 20px;
-    padding-bottom: 25px;
-    font-family: Arial;
-    letter-spacing: 1.2px;
-    line-height: 30px;
-}
+        .btn:focus,
+        .srch:focus {
+            outline: none;
+        }
 
-.content h1{
-    font-family: 'Times New Roman';
-    font-size: 50px;
-    padding-left: 20px;
-    margin-top: 9%;
-    letter-spacing: 2px;
-}
+        /* ===== MAIN CONTENT ===== */
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap; /* text + form one below other on small */
+            gap: 40px;
+        }
 
-.content .cn{
-    width: 160px;
-    height: 40px;
-    background: #ff7200;
-    border: none;
-    margin-bottom: 10px;
-    margin-left: 20px;
-    font-size: 18px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: .4s ease;
-    
-}
+        .content-text {
+            flex: 1 1 300px;
+            min-width: 260px;
+        }
 
-.content .cn a{
-    text-decoration: none;
-    color: #000;
-    transition: .3s ease;
-}
+        .content h1 {
+            font-family: 'Times New Roman', serif;
+            font-size: 42px;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
 
-.cn:hover{
-    background-color: #fff;
-}
+        .content h1 span {
+            color: #ff7200;
+            font-size: 48px;
+        }
 
-.content span{
-    color: #ff7200;
-    font-size: 65px
-}
+        .content .par {
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
 
-.form{
-    width: 250px;
-    height: 380px;
-    background: linear-gradient(to top, rgba
+        .cn {
+            width: 160px;
+            height: 40px;
+            background: #ff7200;
+            border: none;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
 
-(0,0,0,0.8)50%,rgba(0,0,0,0.8)50%);
-    position: absolute;
-    top: -20px;
-    left: 870px;
-    transform: translate(0%,-5%);
-    border-radius: 10px;
-    padding: 25px;
-}
+        .cn a {
+            text-decoration: none;
+            color: #000;
+            font-weight: bold;
+        }
 
-.form h2{
-    width: 220px;
-    font-family: sans-serif;
-    text-align: center;
-    color: #ff7200;
-    font-size: 22px;
-    background-color: #fff;
-    border-radius: 10px;
-    margin: 2px;
-    padding: 8px;
-}
+        .cn:hover {
+            background-color: #fff;
+        }
 
-.form input{
-    width: 240px;
-    height: 35px;
-    background: transparent;
-    border-bottom: 1px solid #ff7200;
-    border-top: none;
-    border-right: none;
-    border-left: none;
-    color: #fff;
-    font-size: 15px;
-    letter-spacing: 1px;
-    margin-top: 30px;
-    font-family: sans-serif;
-}
+        /* ===== LOGIN FORM ===== */
+        .form {
+            flex: 0 1 320px;
+            max-width: 100%;
+            background: linear-gradient(
+                to top,
+                rgba(0, 0, 0, 0.8) 50%,
+                rgba(0, 0, 0, 0.8) 50%
+            );
+            border-radius: 10px;
+            padding: 25px 20px 30px;
+        }
 
-.form input:focus{
-    outline: none;
-}
+        .form h2 {
+            width: 100%;
+            text-align: center;
+            color: #ff7200;
+            font-size: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            padding: 8px 0;
+        }
 
-::placeholder{
-    color: #fff;
-    font-family: Arial;
-}
+        .form input {
+            width: 100%;
+            height: 35px;
+            background: transparent;
+            border-bottom: 1px solid #ff7200;
+            border-top: none;
+            border-right: none;
+            border-left: none;
+            color: #fff;
+            font-size: 15px;
+            letter-spacing: 1px;
+            margin-top: 25px;
+        }
 
-.btnn{
-    width: 240px;
-    height: 40px;
-    background: #ff7200;
-    border: none;
-    margin-top: 30px;
-    font-size: 18px;
-    border-radius: 10px;
-    cursor: pointer;
-    color: #fff;
-    transition: 0.4s ease;
-}
-.btnn:hover{
-    background: #fff;
-    color: #ff7200;
-}
-.btnn a{
-    text-decoration: none;
-    color: #000;
-    font-weight: bold;
-}
-.form .link{
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 17px;
-    padding-top: 20px;
-    text-align: center;
-}
-.form .link a{
-    text-decoration: none;
-    color: #ff7200;
-}
-.liw{
-    padding-top: 15px;
-    padding-bottom: 10px;
-    text-align: center;
-}
-.icons a{
-    text-decoration: none;
-    color: #fff;
-}
-.icons ion-icon{
-    color: #fff;
-    font-size: 30px;
-    padding-left: 14px;
-    padding-top: 5px;
-    transition: 0.3s ease;
-}
-.icons ion-icon:hover{
-    color: #ff7200;
-}
-</style>
+        .form input:focus {
+            outline: none;
+        }
+
+        .btnn {
+            width: 100%;
+            height: 40px;
+            background: #ff7200;
+            border: none;
+            margin-top: 30px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: #fff;
+            transition: 0.3s ease;
+        }
+
+        .btnn:hover {
+            background: #fff;
+            color: #ff7200;
+        }
+
+        .btnn a {
+            text-decoration: none;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .form .link {
+            font-size: 15px;
+            text-align: center;
+            padding-top: 20px;
+        }
+
+        .form .link a {
+            text-decoration: none;
+            color: #ff7200;
+        }
+
+        .liw {
+            padding-top: 15px;
+            padding-bottom: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .icons {
+            text-align: center;
+        }
+
+        .icons a {
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .icons ion-icon {
+            font-size: 26px;
+            margin: 0 5px;
+            transition: 0.3s ease;
+        }
+
+        .icons ion-icon:hover {
+            color: #ff7200;
+        }
+
+        /* ===== RESPONSIVE BREAKPOINTS ===== */
+
+        /* Tablets & small laptops */
+        @media (max-width: 992px) {
+            .navbar {
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .search {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .content h1 {
+                font-size: 36px;
+            }
+
+            .content h1 span {
+                font-size: 40px;
+            }
+        }
+
+        /* Mobiles */
+        @media (max-width: 600px) {
+            .navbar {
+                padding: 10px 15px;
+            }
+
+            .icon .logo {
+                font-size: 24px;
+            }
+
+            .menu ul {
+                justify-content: center;
+                gap: 12px;
+            }
+
+            .menu ul li a {
+                font-size: 12px;
+            }
+
+            .search {
+                flex-direction: row;
+                justify-content: center;
+            }
+
+            .srch {
+                width: 60%;
+                font-size: 14px;
+            }
+
+            .btn {
+                width: auto;
+                padding: 0 15px;
+            }
+
+            .content {
+                padding: 30px 15px 40px;
+            }
+
+            .content h1 {
+                font-size: 30px;
+            }
+
+            .content h1 span {
+                font-size: 32px;
+            }
+
+            .form {
+                padding: 20px 15px 25px;
+            }
+        }
+
+    </style>
 </head>
 <body>
 
-    <div class="main">
-        <div class="navbar">
-            <div class="icon">
-                <h2 class="logo">PraRoz</h2>
-            </div>
+<div class="main">
 
-            <div class="menu">
-                <ul>
-                    <li><a href="#">HOME</a></li>
-                    <li><a href="#">ABOUT</a></li>
-                    <li><a href="#">SERVICE</a></li>
-                    <li><a href="#">DESIGN</a></li>
-                    <li><a href="#">CONTACT</a></li>
-                </ul>
-            </div>
+    <div class="navbar">
+        <div class="icon">
+            <h2 class="logo">PraRoz</h2>
+        </div>
 
-            <div class="search">
-                <input class="srch" type="search" name="" 
+        <div class="menu">
+            <ul>
+                <li><a href="#">HOME</a></li>
+                <li><a href="#">ABOUT</a></li>
+                <li><a href="#">SERVICE</a></li>
+                <li><a href="#">DESIGN</a></li>
+                <li><a href="#">CONTACT</a></li>
+            </ul>
+        </div>
 
-placeholder="Type To text">
-                <a href="#"> <button 
-
-class="btn">Search</button></a>
-            </div>
-
-        </div> 
-        <div class="content">
-            <h1>Web Design & <br><span>Development</span> 
-
-<br>Course</h1>
-            <p class="par">Lorem ipsum dolor sit amet 
-
-consectetur adipisicing elit. Sunt neque 
-                 expedita atque eveniet <br> quis nesciunt. 
-
-Quos nulla vero consequuntur, fugit nemo ad delectus 
-                <br> a quae totam ipsa illum minus 
-
-laudantium?</p>
-
-                <button class="cn"><a href="#">JOIN 
-
-US</a></button>
-
-                <div class="form">
-                    <h2>Login Here</h2>
-                    <input type="email" name="email" 
-
-placeholder="Enter Email Here">
-                    <input type="password" name="" 
-
-placeholder="Enter Password Here">
-                    <button class="btnn"><a 
-
-href="#">Login</a></button>
-
-                    <p class="link">Don't have an 
-
-account<br>
-                    <a href="#">Sign up </a> here</a></p>
-                    <p class="liw">Log in with</p>
-
-                    <div class="icons">
-                        <a href="#"><ion-icon name="logo-
-
-facebook"></ion-icon></a>
-                        <a href="#"><ion-icon name="logo-
-
-instagram"></ion-icon></a>
-                        <a href="#"><ion-icon name="logo-
-
-twitter"></ion-icon></a>
-                        <a href="#"><ion-icon name="logo-
-
-google"></ion-icon></a>
-                        <a href="#"><ion-icon name="logo-
-
-skype"></ion-icon></a>
-                    </div>
-
-                </div>
-                    </div>
-                </div>
+        <div class="search">
+            <input class="srch" type="search" placeholder="Type to text">
+            <button class="btn">Search</button>
         </div>
     </div>
-    <script 
 
-src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></sc
+    <div class="content">
+        <div class="content-text">
+            <h1>Web Design & <br><span>Development</span> <br>Course</h1>
+            <p class="par">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt neque
+                expedita atque eveniet quis nesciunt. Quos nulla vero consequuntur,
+                fugit nemo ad delectus a quae totam ipsa illum minus laudantium?
+            </p>
 
-ript>
+            <button class="cn"><a href="#">JOIN US</a></button>
+        </div>
+
+        <div class="form">
+            <h2>Login Here</h2>
+            <input type="email" placeholder="Enter Email Here">
+            <input type="password" placeholder="Enter Password Here">
+            <button class="btnn"><a href="#">Login</a></button>
+
+            <p class="link">Don't have an account<br>
+                <a href="#">Sign up</a> here
+            </p>
+            <p class="liw">Log in with</p>
+
+            <div class="icons">
+                <a href="#"><ion-icon name="logo-facebook"></ion-icon></a>
+                <a href="#"><ion-icon name="logo-instagram"></ion-icon></a>
+                <a href="#"><ion-icon name="logo-twitter"></ion-icon></a>
+                <a href="#"><ion-icon name="logo-google"></ion-icon></a>
+                <a href="#"><ion-icon name="logo-skype"></ion-icon></a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
 </body>
 </html>
