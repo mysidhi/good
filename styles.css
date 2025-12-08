@@ -1,3 +1,4 @@
+<style>
 *{
     margin: 0;
     padding: 0;
@@ -263,3 +264,4 @@ ul li a:hover{
 .icons ion-icon:hover{
     color: #ff7200;
 }
+</style>
