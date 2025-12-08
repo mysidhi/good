@@ -16,7 +16,7 @@
   }
 
   body {
-    background: url("https://images.unsplash.com/photo-1710988486897-e933e4b0f72c") center/cover no-repeat fixed;
+    background: url("https://images.unsplash.com/photo-1545091741-2231068f3478") center/cover no-repeat fixed;
     /* Responsive full screen background */
     display: flex;
     justify-content: center;
@@ -149,21 +149,28 @@
     <p>Welcome back! Please enter your details.</p>
 
     <form>
+       <label for="usrename">username</label>
 
+      <input type="username" id="email" placeholder="Enter your username" required> 
       <label for="email">Email</label>
 
-      <input type="email" id="email" placeholder="Enter your email" required>
+      <input type="email" id="email" placeholder="Enter your email" required> 
 
       <label for="password">Password</label>
 
       <input type="password" id="password" placeholder="Password" required>
+      
+      <label for="re-password">Password</label>
 
+      <input type="re-password" id="password" placeholder="Password" required>
+
+      
       <div class="forgot">
   <a href="password-reset">Forgot password</a>
        </div>
 
       
-      <button type="submit" class="btn btn-primary">Login</button>
+      <button type="submit" class="btn btn-primary">Sign up</button>
 
       <button type="button" class="btn btn-google">
 
