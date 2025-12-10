@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Camera — Big Buttons & Responsive Controls</title>
+<title>iMAGE & QR</title>
 
 <!-- jsQR library for scanning -->
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
@@ -19,7 +19,7 @@
     --card-radius:14px;
     --gap:14px;
     /* responsive typography */
-    --btn-font: clamp(16px, 2.4vw, 18px);
+    --btn-font: clamp(18px, 2.4vw, 18px);
     --ui-gap: 14px;
     font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   }
@@ -251,10 +251,9 @@
   <div class="card">
     <div class="header">
       <div>
-        <div class="title">Camera — Big Buttons & Responsive Controls</div>
-        <div class="subtitle">Improved touch targets — toggle to switch modes, shutter flash & sound included.</div>
+        <div class="title">Camera — QR </div>
       </div>
-      <div id="modeIndicator" style="font-weight:700;color:var(--muted)">Mode: <span style="color:#fff">Capture</span></div>
+      <div id="modeIndicator" style="font-weight:700;color:var(--muted)">Mode: <span style="color:#fff">Image </span></div>
     </div>
 
     <div class="layout">
@@ -268,18 +267,18 @@
         </div>
 
         <p id="qrResult" aria-live="polite"></p>
-        <p class="hint">Allow camera permission. Switch to QR mode to scan codes.</p>
+        
       </div>
 
       <!-- Controls -->
       <div class="controls">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:9px;flex-wrap:wrap;">
           <div class="toggle" role="group" aria-label="Mode toggle">
             <div class="label">Capture</div>
             <div id="modeSwitch" class="switch" role="button" tabindex="0" aria-pressed="false" aria-label="Toggle mode">
               <div class="knob"></div>
             </div>
-            <div class="label">QR</div>
+            <div class="label">Scan QR</div>
           </div>
 
           <div style="display:flex;gap:10px;flex-wrap:wrap;">
@@ -289,7 +288,7 @@
         </div>
 
         <div class="panel" role="toolbar" aria-label="camera controls">
-          <button id="snapBtn" class="btn accent">📸 Click Image</button>
+          <button id="snapBtn" class="btn accent"> Click Image</button>
           <button id="stopBtn" class="btn danger">Off</button>
         </div>
 
