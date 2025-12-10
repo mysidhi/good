@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Camera — Responsive Capture, Share & Download</title>
+<title>Camera — Responsive Capture & QR (Toggle) + Shutter</title>
 
 <!-- jsQR library for scanning -->
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
@@ -79,6 +79,23 @@
     display:block;
     transform: scaleX(-1); /* mirror by default for front UX (flipped when using back) */
     transition: transform .2s ease;
+  }
+
+  /* shutter flash overlay */
+  .flash {
+    position:absolute;
+    inset:0;
+    background: white;
+    opacity:0;
+    pointer-events:none;
+  }
+  .flash.flash-animate {
+    animation: flashAnim .45s ease-out forwards;
+  }
+  @keyframes flashAnim {
+    0% { opacity: 0.98; }
+    60% { opacity: 0.35; }
+    100% { opacity: 0; }
   }
 
   .status {
@@ -163,6 +180,39 @@
 
   footer.note { text-align:center; color:var(--muted); font-size:0.82rem; padding-top:6px; }
 
+  /* toggle control style */
+  .toggle {
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    padding:6px;
+    border-radius:999px;
+    background: rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.04);
+  }
+  .toggle .label { color:var(--muted); font-weight:600; font-size:0.92rem; }
+  .switch {
+    width:60px;
+    height:34px;
+    background: rgba(255,255,255,0.06);
+    border-radius:999px;
+    display:flex;
+    align-items:center;
+    padding:4px;
+    cursor:pointer;
+  }
+  .knob {
+    width:26px;
+    height:26px;
+    border-radius:50%;
+    background: linear-gradient(180deg,#fff,#e6e6e6);
+    box-shadow: 0 6px 18px rgba(2,6,23,0.4);
+    transform: translateX(0);
+    transition: transform .18s cubic-bezier(.2,.9,.2,1);
+  }
+  .switch.on { background: linear-gradient(90deg,var(--primary), #005fcc); }
+  .switch.on .knob { transform: translateX(26px); }
+
   /* responsive: stack layout on small screens, enlarge touch targets */
   @media (max-width:900px){
     .layout{ grid-template-columns: 1fr; }
@@ -183,8 +233,8 @@
   <div class="card">
     <div class="header">
       <div>
-        <div class="title">Responsive Camera — Capture & QR</div>
-        <div class="subtitle">Works on mobile & desktop. Share or download captured photos.</div>
+        <div class="title">Camera — Capture & QR (Toggle)</div>
+        <div class="subtitle">Tap the toggle to change mode. Click image to capture — includes shutter animation & sound.</div>
       </div>
       <div id="modeIndicator" style="font-weight:600;color:var(--muted)">Mode: <span style="color:#fff">Capture</span></div>
     </div>
@@ -196,6 +246,9 @@
           <div id="statusBadge" class="status" role="status" aria-atomic="true"><span class="dot"></span><span id="statusText">Camera Off</span></div>
           <video id="cam" autoplay muted playsinline></video>
           <canvas id="canvas" style="display:none"></canvas>
+
+          <!-- Shutter flash overlay -->
+          <div id="flash" class="flash" aria-hidden="true"></div>
         </div>
 
         <p id="qrResult" aria-live="polite"></p>
@@ -204,14 +257,23 @@
 
       <!-- Controls -->
       <div class="controls">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+          <div class="toggle" role="group" aria-label="Mode toggle">
+            <div class="label">Capture</div>
+            <div id="modeSwitch" class="switch" role="button" tabindex="0" aria-pressed="false" aria-label="Toggle mode">
+              <div class="knob"></div>
+            </div>
+            <div class="label">QR</div>
+          </div>
+
+          <div style="display:flex;gap:10px;">
+            <button id="switchFrontBtn" class="btn ghost" title="Front camera">Front</button>
+            <button id="switchBackBtn" class="btn ghost" title="Back camera">Back</button>
+          </div>
+        </div>
+
         <div class="panel" role="toolbar" aria-label="camera controls">
-          <button id="captureModeBtn" class="btn ghost" aria-pressed="true">Capture Mode</button>
           <button id="snapBtn" class="btn accent">📸 Click Image</button>
-          <button id="qrModeBtn" class="btn ghost">QR Scan Mode</button>
-
-          <button id="switchFrontBtn" class="btn">Front</button>
-          <button id="switchBackBtn" class="btn">Back</button>
-
           <button id="stopBtn" class="btn danger">Off</button>
         </div>
 
@@ -219,14 +281,13 @@
           <img id="photo" alt="Captured photo preview">
           <div class="download-row" id="downloadSection" style="display:none">
             <button id="downloadBtn" class="btn success" disabled>⬇️ Download</button>
-            <button id="shareBtn" class="btn primary" disabled>🔗 Share</button>
             <button id="saveBtn" class="btn ghost" title="Save to gallery (Android)">Save to gallery</button>
           </div>
         </div>
       </div>
     </div>
 
-    <footer class="note">Tip: On mobile use the Share button to send the photo directly (if your browser supports Web Share).</footer>
+    <footer class="note">Tip: On mobile use the browser download or Save to gallery to store photos.</footer>
   </div>
 </div>
 
@@ -234,7 +295,7 @@
   // state
   let mediaStream = null;
   let currentFacingMode = "environment";
-  let currentMode = "capture";
+  let currentMode = "capture"; // 'capture' or 'qr'
   let capturedImage = null; // dataURL
   let scanInterval = null;
 
@@ -248,16 +309,16 @@
 
   const snapBtn = document.getElementById('snapBtn');
   const downloadBtn = document.getElementById('downloadBtn');
-  const shareBtn = document.getElementById('shareBtn');
   const saveBtn = document.getElementById('saveBtn');
   const stopBtn = document.getElementById('stopBtn');
-  const qrModeBtn = document.getElementById('qrModeBtn');
-  const captureModeBtn = document.getElementById('captureModeBtn');
   const switchFrontBtn = document.getElementById('switchFrontBtn');
   const switchBackBtn = document.getElementById('switchBackBtn');
+
   const statusBadge = document.getElementById('statusBadge');
   const statusText = document.getElementById('statusText');
   const modeIndicator = document.getElementById('modeIndicator');
+  const modeSwitch = document.getElementById('modeSwitch');
+  const flashEl = document.getElementById('flash');
 
   // UI helpers
   function setStatus(online, text){
@@ -265,12 +326,18 @@
     if(online) statusBadge.classList.add('live'); else statusBadge.classList.remove('live');
   }
 
-  function setMode(mode){
-    currentMode = mode;
-    modeIndicator.innerHTML = 'Mode: <span style="color:#fff">' + (mode === 'capture' ? 'Capture' : 'QR Scan') + '</span>';
-    captureModeBtn.setAttribute('aria-pressed', mode === 'capture');
-    qrModeBtn.setAttribute('aria-pressed', mode === 'qr');
-    if(mode === 'qr'){
+  function updateModeUI(){
+    modeIndicator.innerHTML = 'Mode: <span style="color:#fff">' + (currentMode === 'capture' ? 'Capture' : 'QR Scan') + '</span>';
+    // update toggle visual
+    if(currentMode === 'qr'){ modeSwitch.classList.add('on'); modeSwitch.setAttribute('aria-pressed','true'); }
+    else { modeSwitch.classList.remove('on'); modeSwitch.setAttribute('aria-pressed','false'); }
+  }
+
+  // toggle handler (click & keyboard)
+  function toggleMode(){
+    currentMode = (currentMode === 'capture') ? 'qr' : 'capture';
+    updateModeUI();
+    if(currentMode === 'qr'){
       qrResult.textContent = 'Scanning for QR code...';
       previewArea.style.display = 'none';
       downloadSection.style.display = 'none';
@@ -281,6 +348,9 @@
       getMediaStream();
     }
   }
+
+  modeSwitch.addEventListener('click', toggleMode);
+  modeSwitch.addEventListener('keydown', (e) => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleMode(); }});
 
   // request camera
   async function getMediaStream(){
@@ -320,6 +390,42 @@
     });
   }
 
+  // shutter sound using WebAudio (small synthesized shutter)
+  function playShutterSound(){
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = 'triangle';
+      o.frequency.value = 1000;
+      g.gain.value = 0.0001;
+      o.connect(g);
+      g.connect(ctx.destination);
+      const now = ctx.currentTime;
+      // quick click: ramp up then down
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.exponentialRampToValueAtTime(0.06, now + 0.005);
+      o.frequency.setValueAtTime(1000, now);
+      o.frequency.exponentialRampToValueAtTime(600, now + 0.08);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+      o.start(now);
+      o.stop(now + 0.13);
+      // close context after short delay to free resources
+      setTimeout(()=> { try { ctx.close(); } catch(e){} }, 400);
+    } catch(e){
+      // ignore audio errors (user agents may block)
+      console.warn('Audio not available', e);
+    }
+  }
+
+  // animate flash
+  function animateFlash(){
+    flashEl.classList.remove('flash-animate');
+    // force reflow
+    void flashEl.offsetWidth;
+    flashEl.classList.add('flash-animate');
+  }
+
   // capture
   snapBtn.addEventListener('click', () => {
     if(currentMode !== 'capture') return;
@@ -338,12 +444,15 @@
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     }
 
+    // shutter effects
+    animateFlash();
+    playShutterSound();
+
     capturedImage = canvas.toDataURL('image/png', 0.95);
     photo.src = capturedImage;
     previewArea.style.display = 'flex';
     downloadSection.style.display = 'flex';
     downloadBtn.disabled = false;
-    shareBtn.disabled = false;
   });
 
   // download
@@ -357,52 +466,14 @@
     a.remove();
   });
 
-  // share using Web Share API (with files)
-  shareBtn.addEventListener('click', async () => {
-    if(!capturedImage) return alert('No photo to share.');
-    // If Web Share with files is supported
-    if (navigator.canShare && navigator.canShare({ files: [] }) && navigator.share) {
-      try {
-        // Convert dataURL -> blob -> File
-        const blob = await (await fetch(capturedImage)).blob();
-        const file = new File([blob], 'mysidhi.png', { type: blob.type });
-        await navigator.share({
-          files: [file],
-          title: 'Photo from MySidhi',
-          text: 'Photo captured with Camera'
-        });
-      } catch (err) {
-        console.error('Share failed', err);
-        alert('Share failed: ' + (err && err.message || err));
-      }
-    } else if (navigator.share) {
-      // Legacy: share URL or text (can't share file). We can try to open the image in a new tab and ask user to share manually.
-      try {
-        await navigator.share({ title: 'Photo', text: 'Photo captured — save or download it', url: capturedImage });
-      } catch (err) {
-        console.error('Share fallback failed', err);
-        alert('Share unavailable on this browser. Please download the photo instead.');
-      }
-    } else {
-      // No Web Share support -> fallback to download
-      alert('Web Share not supported on this device/browser. The photo will be downloaded instead.');
-      downloadBtn.click();
-    }
-  });
-
-  // save to gallery (Android: attempt to open blob URL so user can long-press, or suggest download)
+  // save to gallery (Android: open blob URL to long-press or trigger download)
   saveBtn.addEventListener('click', async () => {
     if(!capturedImage) return;
-    // Try saving the blob and opening it in a new tab (user can long-press to save)
     try {
       const blob = await (await fetch(capturedImage)).blob();
       const blobUrl = URL.createObjectURL(blob);
       const w = window.open(blobUrl, '_blank');
-      if(!w) {
-        // popup blocked -> download instead
-        downloadBtn.click();
-      }
-      // revoke after a delay
+      if(!w) downloadBtn.click();
       setTimeout(()=> URL.revokeObjectURL(blobUrl), 30000);
     } catch (err) {
       console.error(err);
@@ -426,11 +497,7 @@
   switchFrontBtn.addEventListener('click', () => { currentFacingMode = 'user'; getMediaStream(); });
   switchBackBtn.addEventListener('click', () => { currentFacingMode = 'environment'; getMediaStream(); });
 
-  // modes
-  qrModeBtn.addEventListener('click', () => setMode('qr'));
-  captureModeBtn.addEventListener('click', () => setMode('capture'));
-
-  // QR scan
+  // QR scan implementation (same as before)
   function startQRScan(){
     clearInterval(scanInterval);
     if(!video.videoWidth) {
@@ -468,14 +535,24 @@
 
   // init
   (async function init(){
-    setMode('capture');
+    updateModeUI();
+    setModeInitial();
     await getMediaStream().catch(()=>{});
   })();
 
+  function setModeInitial(){
+    // default capture
+    currentMode = 'capture';
+    updateModeUI();
+  }
+
   // cleanup
   window.addEventListener('beforeunload', ()=> { if(mediaStream) mediaStream.getTracks().forEach(t=>t.stop()); });
-  // keyboard: space = snapshot
-  window.addEventListener('keydown', (e) => { if(e.key === ' ') { e.preventDefault(); snapBtn.click(); }});
+  // keyboard: space = snapshot, t = toggle
+  window.addEventListener('keydown', (e) => {
+    if(e.key === ' ') { e.preventDefault(); snapBtn.click(); }
+    if(e.key.toLowerCase() === 't') toggleMode();
+  });
 </script>
 </body>
 </html>
