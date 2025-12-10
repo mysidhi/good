@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Camera — Responsive Capture & QR (Toggle) + Shutter</title>
+<title>Camera — Big Buttons & Responsive Controls</title>
 
 <!-- jsQR library for scanning -->
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
@@ -17,7 +17,10 @@
     --success:#34c759;
     --danger:#ff3b30;
     --card-radius:14px;
-    --gap:12px;
+    --gap:14px;
+    /* responsive typography */
+    --btn-font: clamp(16px, 2.4vw, 18px);
+    --ui-gap: 14px;
     font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   }
 
@@ -33,9 +36,9 @@
   .card{
     background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
     border-radius: var(--card-radius);
-    padding:14px;
+    padding:18px;
     display:grid;
-    gap:14px;
+    gap:var(--gap);
     border:1px solid rgba(255,255,255,0.04);
     box-shadow: 0 10px 30px rgba(2,6,23,0.6);
   }
@@ -46,14 +49,14 @@
     justify-content:space-between;
     gap:12px;
   }
-  .title { font-weight:700; font-size:1.05rem; }
-  .subtitle { color:var(--muted); font-size:0.88rem; }
+  .title { font-weight:700; font-size:clamp(18px,2.6vw,20px); }
+  .subtitle { color:var(--muted); font-size:clamp(13px,1.6vw,14px); }
 
-  /* layout: video left, controls right on wide screens */
+  /* layout */
   .layout {
     display:grid;
-    grid-template-columns: 1fr 360px;
-    gap:16px;
+    grid-template-columns: 1fr 380px;
+    gap:18px;
     align-items:start;
   }
 
@@ -77,7 +80,7 @@
     height:100%;
     object-fit:cover;
     display:block;
-    transform: scaleX(-1); /* mirror by default for front UX (flipped when using back) */
+    transform: scaleX(-1);
     transition: transform .2s ease;
   }
 
@@ -93,7 +96,7 @@
     animation: flashAnim .45s ease-out forwards;
   }
   @keyframes flashAnim {
-    0% { opacity: 0.98; }
+    0% { opacity: 0.95; }
     60% { opacity: 0.35; }
     100% { opacity: 0; }
   }
@@ -116,39 +119,46 @@
   .status .dot{ width:10px; height:10px; border-radius:50%; background:#999; }
   .status.live .dot{ background:var(--success); box-shadow:0 0 8px rgba(52,199,89,0.12); }
 
-  /* controls area */
+  /* controls area - more touch-friendly */
   .controls {
     display:flex;
     flex-direction:column;
-    gap:12px;
+    gap:14px;
   }
 
   .panel {
     display:flex;
-    gap:10px;
+    gap:12px;
     flex-wrap:wrap;
   }
 
+  /* Larger, touch-friendly buttons */
   .btn {
     appearance:none;
     border:none;
-    padding:12px 14px;
-    min-width:110px;
-    border-radius:10px;
-    font-weight:600;
+    padding:16px 18px;               /* larger padding */
+    min-width:132px;                /* larger touch area on wide screens */
+    min-height:56px;                /* comfortable tap target */
+    border-radius:12px;
+    font-weight:700;
     cursor:pointer;
     color: #0b1220;
     background: rgba(255,255,255,0.95);
-    box-shadow: 0 8px 20px rgba(2,6,23,0.35);
-    transition: transform .08s ease;
+    box-shadow: 0 10px 30px rgba(2,6,23,0.28);
+    transition: transform .08s ease, box-shadow .12s ease;
+    font-size: var(--btn-font);
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
   }
-  .btn:active{ transform:translateY(1px); }
+  .btn:active{ transform:translateY(1px); box-shadow: 0 6px 18px rgba(2,6,23,0.22); }
 
   .btn.primary { background: linear-gradient(90deg,var(--primary), #005fcc); color:#fff; }
   .btn.accent { background: linear-gradient(90deg,var(--accent), #d57808); color:#fff; }
   .btn.success { background: linear-gradient(90deg,var(--success), #2fb04a); color:#052206; }
   .btn.danger { background: linear-gradient(90deg,var(--danger), #d42b22); color:#fff; }
-  .btn.ghost { background: transparent; border:1px solid rgba(255,255,255,0.04); color:var(--muted); }
+  .btn.ghost { background: transparent; border:1px solid rgba(255,255,255,0.06); color:var(--muted); box-shadow:none; }
 
   .preview {
     display:flex;
@@ -159,15 +169,15 @@
   }
   img#photo {
     width:100%;
-    max-width:320px;
-    border-radius:10px;
+    max-width:360px;
+    border-radius:12px;
     border:2px solid rgba(255,255,255,0.04);
-    box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+    box-shadow: 0 12px 40px rgba(2,6,23,0.6);
   }
 
   .download-row {
     display:flex;
-    gap:10px;
+    gap:12px;
     align-items:center;
     justify-content:center;
     width:100%;
@@ -176,54 +186,62 @@
 
   #qrResult { text-align:center; color:#c6f4d1; font-weight:700; word-break:break-word; }
 
-  .hint { color:var(--muted); text-align:center; font-size:0.9rem; }
+  .hint { color:var(--muted); text-align:center; font-size:0.92rem; }
 
-  footer.note { text-align:center; color:var(--muted); font-size:0.82rem; padding-top:6px; }
+  footer.note { text-align:center; color:var(--muted); font-size:0.86rem; padding-top:6px; }
 
-  /* toggle control style */
+  /* Toggle control bigger */
   .toggle {
     display:inline-flex;
     align-items:center;
-    gap:10px;
-    padding:6px;
+    gap:12px;
+    padding:8px;
     border-radius:999px;
     background: rgba(255,255,255,0.03);
     border:1px solid rgba(255,255,255,0.04);
+    padding-left:12px;
+    padding-right:12px;
   }
-  .toggle .label { color:var(--muted); font-weight:600; font-size:0.92rem; }
+  .toggle .label { color:var(--muted); font-weight:700; font-size:clamp(13px,1.8vw,15px); }
+
   .switch {
-    width:60px;
-    height:34px;
+    width:84px;     /* wider for bigger knob movement */
+    height:44px;    /* taller touch area */
     background: rgba(255,255,255,0.06);
     border-radius:999px;
     display:flex;
     align-items:center;
-    padding:4px;
+    padding:6px;
     cursor:pointer;
   }
   .knob {
-    width:26px;
-    height:26px;
+    width:36px;     /* bigger knob */
+    height:36px;
     border-radius:50%;
     background: linear-gradient(180deg,#fff,#e6e6e6);
-    box-shadow: 0 6px 18px rgba(2,6,23,0.4);
+    box-shadow: 0 8px 22px rgba(2,6,23,0.35);
     transform: translateX(0);
     transition: transform .18s cubic-bezier(.2,.9,.2,1);
   }
   .switch.on { background: linear-gradient(90deg,var(--primary), #005fcc); }
-  .switch.on .knob { transform: translateX(26px); }
+  .switch.on .knob { transform: translateX(40px); }
 
-  /* responsive: stack layout on small screens, enlarge touch targets */
-  @media (max-width:900px){
+  /* responsive adjustments */
+  @media (max-width:1000px){
     .layout{ grid-template-columns: 1fr; }
     .controls{ order: 2; }
-    .btn{ min-width:48%; padding:14px; }
     .panel{ justify-content:center; }
-    img#photo { max-width:260px; }
+    .btn{ min-width:42%; } /* two-in-row on medium screens */
+    img#photo { max-width:320px; }
+    .switch { width:72px; height:40px; }
+    .knob { width:32px; height:32px; transform: translateX(0); }
   }
-  @media (max-width:420px){
-    .btn{ min-width:100%; }
-    .panel{ gap:8px; }
+  @media (max-width:520px){
+    .btn{ min-width:100%; padding:16px 18px; min-height:56px; } /* full width buttons on mobile */
+    .panel{ gap:10px; flex-direction:column; }
+    .toggle{ width:100%; justify-content:space-between; padding:10px; }
+    .switch { width:84px; height:44px; }
+    .knob { width:36px; height:36px; }
     img#photo { max-width:100%; }
   }
 </style>
@@ -233,10 +251,10 @@
   <div class="card">
     <div class="header">
       <div>
-        <div class="title">Camera — Capture & QR (Toggle)</div>
-        <div class="subtitle">Tap the toggle to change mode. Click image to capture — includes shutter animation & sound.</div>
+        <div class="title">Camera — Big Buttons & Responsive Controls</div>
+        <div class="subtitle">Improved touch targets — toggle to switch modes, shutter flash & sound included.</div>
       </div>
-      <div id="modeIndicator" style="font-weight:600;color:var(--muted)">Mode: <span style="color:#fff">Capture</span></div>
+      <div id="modeIndicator" style="font-weight:700;color:var(--muted)">Mode: <span style="color:#fff">Capture</span></div>
     </div>
 
     <div class="layout">
@@ -246,18 +264,16 @@
           <div id="statusBadge" class="status" role="status" aria-atomic="true"><span class="dot"></span><span id="statusText">Camera Off</span></div>
           <video id="cam" autoplay muted playsinline></video>
           <canvas id="canvas" style="display:none"></canvas>
-
-          <!-- Shutter flash overlay -->
           <div id="flash" class="flash" aria-hidden="true"></div>
         </div>
 
         <p id="qrResult" aria-live="polite"></p>
-        <p class="hint">Allow camera permission. In QR mode, URLs open automatically.</p>
+        <p class="hint">Allow camera permission. Switch to QR mode to scan codes.</p>
       </div>
 
       <!-- Controls -->
       <div class="controls">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
           <div class="toggle" role="group" aria-label="Mode toggle">
             <div class="label">Capture</div>
             <div id="modeSwitch" class="switch" role="button" tabindex="0" aria-pressed="false" aria-label="Toggle mode">
@@ -266,7 +282,7 @@
             <div class="label">QR</div>
           </div>
 
-          <div style="display:flex;gap:10px;">
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
             <button id="switchFrontBtn" class="btn ghost" title="Front camera">Front</button>
             <button id="switchBackBtn" class="btn ghost" title="Back camera">Back</button>
           </div>
@@ -287,7 +303,7 @@
       </div>
     </div>
 
-    <footer class="note">Tip: On mobile use the browser download or Save to gallery to store photos.</footer>
+    <footer class="note">Tip: On mobile, buttons are full-width for easy tapping. Use the Save button or Download to store photos.</footer>
   </div>
 </div>
 
@@ -296,7 +312,7 @@
   let mediaStream = null;
   let currentFacingMode = "environment";
   let currentMode = "capture"; // 'capture' or 'qr'
-  let capturedImage = null; // dataURL
+  let capturedImage = null;
   let scanInterval = null;
 
   // elements
@@ -328,12 +344,10 @@
 
   function updateModeUI(){
     modeIndicator.innerHTML = 'Mode: <span style="color:#fff">' + (currentMode === 'capture' ? 'Capture' : 'QR Scan') + '</span>';
-    // update toggle visual
     if(currentMode === 'qr'){ modeSwitch.classList.add('on'); modeSwitch.setAttribute('aria-pressed','true'); }
     else { modeSwitch.classList.remove('on'); modeSwitch.setAttribute('aria-pressed','false'); }
   }
 
-  // toggle handler (click & keyboard)
   function toggleMode(){
     currentMode = (currentMode === 'capture') ? 'qr' : 'capture';
     updateModeUI();
@@ -352,7 +366,7 @@
   modeSwitch.addEventListener('click', toggleMode);
   modeSwitch.addEventListener('keydown', (e) => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleMode(); }});
 
-  // request camera
+  // get camera
   async function getMediaStream(){
     if(mediaStream){
       mediaStream.getTracks().forEach(t => t.stop());
@@ -366,7 +380,6 @@
         audio: false
       });
     } catch (err) {
-      // fallback to non-exact constraint
       try {
         mediaStream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: currentFacingMode },
@@ -390,7 +403,7 @@
     });
   }
 
-  // shutter sound using WebAudio (small synthesized shutter)
+  // shutter sound using WebAudio
   function playShutterSound(){
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -402,7 +415,6 @@
       o.connect(g);
       g.connect(ctx.destination);
       const now = ctx.currentTime;
-      // quick click: ramp up then down
       g.gain.setValueAtTime(0.0001, now);
       g.gain.exponentialRampToValueAtTime(0.06, now + 0.005);
       o.frequency.setValueAtTime(1000, now);
@@ -410,18 +422,14 @@
       g.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
       o.start(now);
       o.stop(now + 0.13);
-      // close context after short delay to free resources
       setTimeout(()=> { try { ctx.close(); } catch(e){} }, 400);
     } catch(e){
-      // ignore audio errors (user agents may block)
       console.warn('Audio not available', e);
     }
   }
 
-  // animate flash
   function animateFlash(){
     flashEl.classList.remove('flash-animate');
-    // force reflow
     void flashEl.offsetWidth;
     flashEl.classList.add('flash-animate');
   }
@@ -444,7 +452,6 @@
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     }
 
-    // shutter effects
     animateFlash();
     playShutterSound();
 
@@ -466,7 +473,7 @@
     a.remove();
   });
 
-  // save to gallery (Android: open blob URL to long-press or trigger download)
+  // save to gallery (open blob to long press)
   saveBtn.addEventListener('click', async () => {
     if(!capturedImage) return;
     try {
@@ -481,7 +488,7 @@
     }
   });
 
-  // stop camera
+  // stop
   stopBtn.addEventListener('click', () => {
     if(mediaStream) {
       mediaStream.getTracks().forEach(t => t.stop());
@@ -497,7 +504,7 @@
   switchFrontBtn.addEventListener('click', () => { currentFacingMode = 'user'; getMediaStream(); });
   switchBackBtn.addEventListener('click', () => { currentFacingMode = 'environment'; getMediaStream(); });
 
-  // QR scan implementation (same as before)
+  // QR scanning
   function startQRScan(){
     clearInterval(scanInterval);
     if(!video.videoWidth) {
@@ -536,23 +543,13 @@
   // init
   (async function init(){
     updateModeUI();
-    setModeInitial();
+    currentMode = 'capture';
     await getMediaStream().catch(()=>{});
   })();
 
-  function setModeInitial(){
-    // default capture
-    currentMode = 'capture';
-    updateModeUI();
-  }
-
   // cleanup
   window.addEventListener('beforeunload', ()=> { if(mediaStream) mediaStream.getTracks().forEach(t=>t.stop()); });
-  // keyboard: space = snapshot, t = toggle
-  window.addEventListener('keydown', (e) => {
-    if(e.key === ' ') { e.preventDefault(); snapBtn.click(); }
-    if(e.key.toLowerCase() === 't') toggleMode();
-  });
+  window.addEventListener('keydown', (e) => { if(e.key === ' ') { e.preventDefault(); snapBtn.click(); } if(e.key.toLowerCase()==='t') toggleMode(); });
 </script>
 </body>
 </html>
