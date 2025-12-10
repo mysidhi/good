@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>iMAGE & QR</title>
+<title>Camera — QR</title>
 
 <!-- jsQR library for scanning -->
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
@@ -11,16 +11,14 @@
 <style>
   :root{
     --bg1:#071226;
-    --muted: rgba(255,255,255,0.75);
+    --muted: rgba(255,255,255,0.78);
     --primary:#007aff;
     --accent:#E3910B;
     --success:#34c759;
     --danger:#ff3b30;
     --card-radius:14px;
     --gap:14px;
-    /* responsive typography */
-    --btn-font: clamp(18px, 2.4vw, 18px);
-    --ui-gap: 14px;
+    --btn-font: clamp(16px, 2.4vw, 18px);
     font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   }
 
@@ -52,196 +50,135 @@
   .title { font-weight:700; font-size:clamp(18px,2.6vw,20px); }
   .subtitle { color:var(--muted); font-size:clamp(13px,1.6vw,14px); }
 
-  /* layout */
   .layout {
     display:grid;
-    grid-template-columns: 1fr 380px;
+    grid-template-columns: 1fr 420px;
     gap:18px;
     align-items:start;
   }
 
-  .viewer {
-    border-radius:12px;
-    overflow:hidden;
-    position:relative;
-    background:#000;
-    min-height: 220px;
-  }
+  .viewer { border-radius:12px; overflow:hidden; position:relative; background:#000; min-height: 220px; }
 
-  .video-wrap{
-    position:relative;
-    width:100%;
-    aspect-ratio: 16/9;
-    background:#000;
-  }
+  .video-wrap{ position:relative; width:100%; aspect-ratio: 16/9; background:#000; }
 
-  video#cam {
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    display:block;
-    transform: scaleX(-1);
-    transition: transform .2s ease;
-  }
+  video#cam { width:100%; height:100%; object-fit:cover; display:block; transform: scaleX(-1); transition: transform .2s ease; }
 
-  /* shutter flash overlay */
-  .flash {
-    position:absolute;
-    inset:0;
-    background: white;
-    opacity:0;
-    pointer-events:none;
-  }
-  .flash.flash-animate {
-    animation: flashAnim .45s ease-out forwards;
-  }
-  @keyframes flashAnim {
-    0% { opacity: 0.95; }
-    60% { opacity: 0.35; }
-    100% { opacity: 0; }
-  }
+  .flash { position:absolute; inset:0; background: white; opacity:0; pointer-events:none; }
+  .flash.flash-animate { animation: flashAnim .45s ease-out forwards; }
+  @keyframes flashAnim { 0% { opacity: 0.95; } 60% { opacity: 0.35; } 100% { opacity: 0; } }
 
-  .status {
-    position:absolute;
-    left:10px;
-    top:10px;
-    background: rgba(0,0,0,0.35);
-    padding:8px 10px;
-    border-radius:999px;
-    display:inline-flex;
-    gap:8px;
-    align-items:center;
-    font-size:0.86rem;
-    color:var(--muted);
-    border:1px solid rgba(255,255,255,0.03);
-    backdrop-filter:blur(6px);
-  }
+  .status { position:absolute; left:10px; top:10px; background: rgba(0,0,0,0.35); padding:8px 10px; border-radius:999px; display:inline-flex; gap:8px; align-items:center; font-size:0.86rem; color:var(--muted); border:1px solid rgba(255,255,255,0.03); backdrop-filter:blur(6px); }
   .status .dot{ width:10px; height:10px; border-radius:50%; background:#999; }
   .status.live .dot{ background:var(--success); box-shadow:0 0 8px rgba(52,199,89,0.12); }
 
-  /* controls area - more touch-friendly */
-  .controls {
+  /* Controls */
+  .controls { display:flex; flex-direction:column; gap:14px; }
+
+  /* Top row: big toggle and camera switch cluster */
+  .top-row { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+
+  /* Large mode toggle */
+  .mode-cluster {
     display:flex;
-    flex-direction:column;
-    gap:14px;
-  }
-
-  .panel {
-    display:flex;
-    gap:12px;
-    flex-wrap:wrap;
-  }
-
-  /* Larger, touch-friendly buttons */
-  .btn {
-    appearance:none;
-    border:none;
-    padding:16px 18px;               /* larger padding */
-    min-width:132px;                /* larger touch area on wide screens */
-    min-height:56px;                /* comfortable tap target */
-    border-radius:12px;
-    font-weight:700;
-    cursor:pointer;
-    color: #0b1220;
-    background: rgba(255,255,255,0.95);
-    box-shadow: 0 10px 30px rgba(2,6,23,0.28);
-    transition: transform .08s ease, box-shadow .12s ease;
-    font-size: var(--btn-font);
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-  }
-  .btn:active{ transform:translateY(1px); box-shadow: 0 6px 18px rgba(2,6,23,0.22); }
-
-  .btn.primary { background: linear-gradient(90deg,var(--primary), #005fcc); color:#fff; }
-  .btn.accent { background: linear-gradient(90deg,var(--accent), #d57808); color:#fff; }
-  .btn.success { background: linear-gradient(90deg,var(--success), #2fb04a); color:#052206; }
-  .btn.danger { background: linear-gradient(90deg,var(--danger), #d42b22); color:#fff; }
-  .btn.ghost { background: transparent; border:1px solid rgba(255,255,255,0.06); color:var(--muted); box-shadow:none; }
-
-  .preview {
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-    align-items:center;
-    justify-content:center;
-  }
-  img#photo {
-    width:100%;
-    max-width:360px;
-    border-radius:12px;
-    border:2px solid rgba(255,255,255,0.04);
-    box-shadow: 0 12px 40px rgba(2,6,23,0.6);
-  }
-
-  .download-row {
-    display:flex;
-    gap:12px;
-    align-items:center;
-    justify-content:center;
-    width:100%;
-    flex-wrap:wrap;
-  }
-
-  #qrResult { text-align:center; color:#c6f4d1; font-weight:700; word-break:break-word; }
-
-  .hint { color:var(--muted); text-align:center; font-size:0.92rem; }
-
-  footer.note { text-align:center; color:var(--muted); font-size:0.86rem; padding-top:6px; }
-
-  /* Toggle control bigger */
-  .toggle {
-    display:inline-flex;
     align-items:center;
     gap:12px;
-    padding:8px;
-    border-radius:999px;
-    background: rgba(255,255,255,0.03);
-    border:1px solid rgba(255,255,255,0.04);
-    padding-left:12px;
-    padding-right:12px;
   }
-  .toggle .label { color:var(--muted); font-weight:700; font-size:clamp(13px,1.8vw,15px); }
-
+  .mode-label { font-weight:700; color:var(--muted); min-width:68px; text-align:center; }
   .switch {
-    width:84px;     /* wider for bigger knob movement */
-    height:44px;    /* taller touch area */
+    width:120px;    /* wider for prominence */
+    height:56px;    /* taller */
     background: rgba(255,255,255,0.06);
     border-radius:999px;
     display:flex;
     align-items:center;
-    padding:6px;
+    padding:8px;
     cursor:pointer;
+    border:1px solid rgba(255,255,255,0.04);
   }
-  .knob {
-    width:36px;     /* bigger knob */
-    height:36px;
+  .switch .knob {
+    width:48px;     /* larger knob */
+    height:48px;
     border-radius:50%;
     background: linear-gradient(180deg,#fff,#e6e6e6);
-    box-shadow: 0 8px 22px rgba(2,6,23,0.35);
+    box-shadow: 0 10px 26px rgba(2,6,23,0.3);
     transform: translateX(0);
-    transition: transform .18s cubic-bezier(.2,.9,.2,1);
+    transition: transform .2s cubic-bezier(.2,.9,.2,1);
   }
   .switch.on { background: linear-gradient(90deg,var(--primary), #005fcc); }
-  .switch.on .knob { transform: translateX(40px); }
+  .switch.on .knob { transform: translateX(58px); }
 
-  /* responsive adjustments */
+  /* Camera switch block: larger circular buttons */
+  .cam-switch {
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+
+  .cam-btn {
+    width:64px;
+    height:64px;
+    border-radius:50%;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+    font-size:16px;
+    cursor:pointer;
+    border:none;
+    background: rgba(255,255,255,0.95);
+    color:#071226;
+    box-shadow: 0 10px 28px rgba(2,6,23,0.28);
+    transition: transform .08s ease, box-shadow .12s ease;
+  }
+  .cam-btn:active { transform: translateY(1px); box-shadow: 0 6px 18px rgba(2,6,23,0.20); }
+
+  .cam-btn.ghost { background: transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.06); box-shadow:none; width:64px; height:64px; }
+
+  .cam-btn .label { display:none; } /* we use icons or short text */
+
+  /* Main action buttons - larger, full-width on mobile */
+  .panel { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+  .btn {
+    padding:16px 20px;
+    min-width:160px;
+    min-height:64px;
+    border-radius:12px;
+    font-weight:700;
+    font-size:var(--btn-font);
+    cursor:pointer;
+    border:none;
+    box-shadow: 0 12px 30px rgba(2,6,23,0.28);
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+  }
+  .btn.accent { background: linear-gradient(90deg,var(--accent), #d57808); color:#fff; }
+  .btn.danger { background: linear-gradient(90deg,var(--danger), #d42b22); color:#fff; }
+
+  .preview { display:flex; flex-direction:column; gap:8px; align-items:center; justify-content:center; }
+  img#photo { width:100%; max-width:420px; border-radius:12px; border:2px solid rgba(255,255,255,0.04); box-shadow: 0 12px 40px rgba(2,6,23,0.6); }
+  .download-row { display:flex; gap:12px; align-items:center; justify-content:center; width:100%; flex-wrap:wrap; }
+
+  #qrResult { text-align:center; color:#c6f4d1; font-weight:700; word-break:break-word; }
+  .hint { color:var(--muted); text-align:center; font-size:0.92rem; }
+  footer.note { text-align:center; color:var(--muted); font-size:0.86rem; padding-top:6px; }
+
+  /* Responsive adjustments */
   @media (max-width:1000px){
     .layout{ grid-template-columns: 1fr; }
-    .controls{ order: 2; }
-    .panel{ justify-content:center; }
-    .btn{ min-width:42%; } /* two-in-row on medium screens */
-    img#photo { max-width:320px; }
-    .switch { width:72px; height:40px; }
-    .knob { width:32px; height:32px; transform: translateX(0); }
+    .cam-btn { width:72px; height:72px; }
+    .switch { width:110px; height:52px; }
+    .switch .knob { width:44px; height:44px; }
+    .btn { min-width:44%; min-height:60px; }
   }
   @media (max-width:520px){
-    .btn{ min-width:100%; padding:16px 18px; min-height:56px; } /* full width buttons on mobile */
-    .panel{ gap:10px; flex-direction:column; }
-    .toggle{ width:100%; justify-content:space-between; padding:10px; }
-    .switch { width:84px; height:44px; }
-    .knob { width:36px; height:36px; }
+    .top-row { flex-direction:column; align-items:stretch; }
+    .mode-cluster { justify-content:space-between; width:100%; }
+    .mode-label { min-width:auto; }
+    .cam-switch { justify-content:center; }
+    .cam-btn { width:72px; height:72px; }
+    .btn { min-width:100%; padding:14px; min-height:56px; }
     img#photo { max-width:100%; }
   }
 </style>
@@ -251,13 +188,14 @@
   <div class="card">
     <div class="header">
       <div>
-        <div class="title">Camera — QR </div>
+        <div class="title">Camera — QR</div>
+       
       </div>
-      <div id="modeIndicator" style="font-weight:700;color:var(--muted)">Mode: <span style="color:#fff">Image </span></div>
+      <div id="modeIndicator" style="font-weight:700;color:var(--muted)">Mode: <span style="color:#fff">Capture</span></div>
     </div>
 
     <div class="layout">
-      <!-- Video / Viewer -->
+      <!-- Video area -->
       <div class="viewer">
         <div class="video-wrap" aria-live="polite">
           <div id="statusBadge" class="status" role="status" aria-atomic="true"><span class="dot"></span><span id="statusText">Camera Off</span></div>
@@ -267,42 +205,42 @@
         </div>
 
         <p id="qrResult" aria-live="polite"></p>
-        
+       
       </div>
 
       <!-- Controls -->
       <div class="controls">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:9px;flex-wrap:wrap;">
-          <div class="toggle" role="group" aria-label="Mode toggle">
-            <div class="label">Capture</div>
-            <div id="modeSwitch" class="switch" role="button" tabindex="0" aria-pressed="false" aria-label="Toggle mode">
-              <div class="knob"></div>
+        <div class="top-row">
+          <div class="mode-cluster" role="group" aria-label="Mode select">
+            <div class="mode-label">Capture</div>
+            <div id="modeSwitch" class="switch" role="button" tabindex="0" aria-pressed="false" aria-label="Toggle capture / QR">
+              <div class="knob" aria-hidden="true"></div>
             </div>
-            <div class="label">Scan QR</div>
+            <div class="mode-label">QR</div>
           </div>
 
-          <div style="display:flex;gap:10px;flex-wrap:wrap;">
-            <button id="switchFrontBtn" class="btn ghost" title="Front camera">Front</button>
-            <button id="switchBackBtn" class="btn ghost" title="Back camera">Back</button>
+          <div class="cam-switch" aria-label="Camera selection">
+            <button id="switchFrontBtn" class="cam-btn ghost" title="Front camera" aria-label="Front camera">F</button>
+            <button id="switchBackBtn" class="cam-btn ghost" title="Back camera" aria-label="Back camera">B</button>
           </div>
         </div>
 
-        <div class="panel" role="toolbar" aria-label="camera controls">
-          <button id="snapBtn" class="btn accent"> Click Image</button>
-          <button id="stopBtn" class="btn danger">Off</button>
+        <div class="panel" role="toolbar" aria-label="Main camera actions">
+          <button id="snapBtn" class="btn accent"> Take Photo</button>
+          <button id="stopBtn" class="btn danger"> Stop</button>
         </div>
 
         <div class="preview" id="previewArea" style="display:none">
           <img id="photo" alt="Captured photo preview">
           <div class="download-row" id="downloadSection" style="display:none">
-            <button id="downloadBtn" class="btn success" disabled>⬇️ Download</button>
-            <button id="saveBtn" class="btn ghost" title="Save to gallery (Android)">Save to gallery</button>
+            <button id="downloadBtn" class="btn" style="background:linear-gradient(90deg,var(--success),#2fb04a); color:#052206;" disabled>⬇️ Download</button>
+            <button id="saveBtn" class="btn ghost" title="Save to gallery (Android)">Save</button>
           </div>
         </div>
       </div>
     </div>
 
-    <footer class="note">Tip: On mobile, buttons are full-width for easy tapping. Use the Save button or Download to store photos.</footer>
+    <footer class="note">Tip: On phones the controls are stacked; on wider screens they align horizontally for a clean look.</footer>
   </div>
 </div>
 
@@ -335,7 +273,7 @@
   const modeSwitch = document.getElementById('modeSwitch');
   const flashEl = document.getElementById('flash');
 
-  // UI helpers
+  // helpers
   function setStatus(online, text){
     statusText.textContent = text;
     if(online) statusBadge.classList.add('live'); else statusBadge.classList.remove('live');
@@ -365,7 +303,7 @@
   modeSwitch.addEventListener('click', toggleMode);
   modeSwitch.addEventListener('keydown', (e) => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleMode(); }});
 
-  // get camera
+  // start camera
   async function getMediaStream(){
     if(mediaStream){
       mediaStream.getTracks().forEach(t => t.stop());
@@ -402,7 +340,7 @@
     });
   }
 
-  // shutter sound using WebAudio
+  // shutter sound
   function playShutterSound(){
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -472,7 +410,7 @@
     a.remove();
   });
 
-  // save to gallery (open blob to long press)
+  // save - open blob so user can long-press
   saveBtn.addEventListener('click', async () => {
     if(!capturedImage) return;
     try {
@@ -487,7 +425,7 @@
     }
   });
 
-  // stop
+  // stop camera
   stopBtn.addEventListener('click', () => {
     if(mediaStream) {
       mediaStream.getTracks().forEach(t => t.stop());
@@ -499,7 +437,7 @@
     } else setStatus(false, 'Camera Off');
   });
 
-  // switch cameras
+  // front/back buttons
   switchFrontBtn.addEventListener('click', () => { currentFacingMode = 'user'; getMediaStream(); });
   switchBackBtn.addEventListener('click', () => { currentFacingMode = 'environment'; getMediaStream(); });
 
@@ -548,7 +486,10 @@
 
   // cleanup
   window.addEventListener('beforeunload', ()=> { if(mediaStream) mediaStream.getTracks().forEach(t=>t.stop()); });
-  window.addEventListener('keydown', (e) => { if(e.key === ' ') { e.preventDefault(); snapBtn.click(); } if(e.key.toLowerCase()==='t') toggleMode(); });
+  window.addEventListener('keydown', (e) => {
+    if(e.key === ' ') { e.preventDefault(); snapBtn.click(); }
+    if(e.key.toLowerCase() === 't') toggleMode();
+  });
 </script>
 </body>
 </html>
