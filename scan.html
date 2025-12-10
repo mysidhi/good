@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Camera — Capture & QR Scan</title>
+
+<!-- jsQR library for scanning -->
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+
+<style>
+  :root{
+    --bg: #0f1724;            /* dark background */
+    --card: rgba(255,255,255,0.06);
+    --glass: rgba(255,255,255,0.04);
+    --muted: rgba(255,255,255,0.65);
+    --primary: #007aff;
+    --accent: #E3910B;
+    --success: #34c759;
+    --danger: #ff3b30;
+    --radius: 12px;
+    --max-width: 900px;
+    --gap: 12px;
+    font-family: Inter, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  html,body{
+    height:100%;
+    margin:0;
+    background: linear-gradient(180deg,#071226 0%, #0b2538 100%);
+    color: #e6eef8;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    padding:24px;
+    box-sizing:border-box;
+  }
+
+  .app{
+    max-width: var(--max-width);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--gap);
+    align-items: start;
+  }
+
+  /* Header area */
+  .header {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+  }
+  .title {
+    font-size:1.05rem;
+    letter-spacing:0.2px;
+    font-weight:600;
+  }
+  .subtitle {
+    font-size:0.82rem;
+    color:var(--muted);
+  }
+
+  /* Main card */
+  .card{
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius: var(--radius);
+    padding: 14px;
+    box-shadow: 0 6px 30px rgba(2,6,23,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.04);
+    display:grid;
+    gap:12px;
+  }
+
+  /* Video area */
+  .viewer {
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    align-items:center;
+  }
+
+  .video-wrap{
+    width:100%;
+    background:var(--glass);
+    border-radius:10px;
+    overflow:hidden;
+    position:relative;
+    aspect-ratio: 16 / 9;
+    max-height: 62vh;
+  }
+
+  video#cam {
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+    background:#000;
+    transform: scaleX(-1); /* mirror for front camera UX; we'll flip when using back */
+    transition: transform .25s ease;
+  }
+
+  /* Live badge */
+  .status {
+    position:absolute;
+    left:12px;
+    top:12px;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 10px;
+    background: linear-gradient(90deg, rgba(0,0,0,0.25), rgba(255,255,255,0.02));
+    border-radius:999px;
+    font-size:0.82rem;
+    color:var(--muted);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+  .status .dot {
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background: #ffb3b3;
+    box-shadow:0 0 8px rgba(255,0,0,0.12);
+  }
+  .status.live .dot { background: var(--success); box-shadow:0 0 10px rgba(52,199,89,0.18); color:#fff; }
+  .status.offline .dot { background:#999; box-shadow:none; }
+
+  /* controls */
+  .panel {
+    display:grid;
+    grid-auto-flow:column;
+    gap:10px;
+    align-items:center;
+    justify-content:center;
+    width:100%;
+    flex-wrap:wrap;
+  }
+
+  /* responsive panel to stack on small screens */
+  @media (max-width:640px){
+    .panel{ grid-auto-flow:row; grid-template-columns: 1fr 1fr; }
+    .header { flex-direction: column; align-items:flex-start; gap:6px; }
+  }
+
+  .btn {
+    appearance:none;
+    border: none;
+    padding:10px 14px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight:600;
+    cursor:pointer;
+    transition: transform .12s ease, box-shadow .12s ease;
+    background: transparent;
+    color:var(--muted);
+    border:1px solid rgba(255,255,255,0.06);
+    min-width:110px;
+    display:inline-flex;
+    gap:8px;
+    align-items:center;
+    justify-content:center;
+  }
+  .btn:active{ transform: translateY(1px); }
+
+  .btn.primary {
+    background: linear-gradient(90deg, var(--primary), #005fcc);
+    color:#fff;
+    border: none;
+    box-shadow: 0 6px 20px rgba(0,122,255,0.18);
+  }
+  .btn.accent {
+    background: linear-gradient(90deg, var(--accent), #d57808);
+    color:#1a1200;
+    border:none;
+  }
+  .btn.success { background: linear-gradient(90deg,var(--success), #2fb04a); color:#052206; border:none; }
+  .btn.danger { background: linear-gradient(90deg,var(--danger), #d42b22); color:#fff; border:none; }
+
+  .btn.ghost {
+    background: transparent;
+    color:var(--muted);
+    border:1px dashed rgba(255,255,255,0.04);
+  }
+
+  /* active mode */
+  .mode-indicator { font-size:0.86rem; color:var(--muted); text-align:center; }
+  .photo-preview {
+    display:flex;
+    gap:12px;
+    align-items:center;
+    justify-content:center;
+    width:100%;
+  }
+  img#photo {
+    max-width:380px;
+    width:100%;
+    border-radius:10px;
+    border: 2px solid rgba(255,255,255,0.04);
+    box-shadow: 0 8px 30px rgba(2,6,23,0.6);
+  }
+
+  .download-wrap { display:flex; gap:10px; align-items:center; justify-content:center; }
+
+  /* small helper */
+  #qrResult {
+    text-align:center;
+    color: #bff0c7;
+    font-weight:600;
+    word-break: break-word;
+  }
+
+  .hint { color:var(--muted); font-size:0.85rem; text-align:center; }
+
+  footer.note {
+    text-align:center;
+    color:var(--muted);
+    font-size:0.78rem;
+    margin-top:6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <div>
+      <div class="title">Camera — Capture & QR Scan</div>
+      <div class="subtitle">Click to take photos, or switch to QR Scan mode</div>
+    </div>
+    <div class="mode-indicator" id="modeIndicator">Mode: <strong>Capture</strong></div>
+  </div>
+
+  <div class="card">
+    <div class="viewer">
+      <div class="video-wrap" aria-live="polite">
+        <div id="statusBadge" class="status offline" role="status" aria-atomic="true">
+          <span class="dot"></span>
+          <span id="statusText">Camera Off</span>
+        </div>
+
+        <video id="cam" autoplay muted playsinline></video>
+        <canvas id="canvas" style="display:none"></canvas>
+      </div>
+
+      <div class="panel" role="toolbar" aria-label="Camera controls">
+        <button id="captureModeBtn" class="btn ghost" title="Capture Mode (photo)" aria-pressed="true">Capture Mode</button>
+        <button id="snapBtn" class="btn accent" title="Take Photo" aria-label="Take photo">📸 Click Image</button>
+        <button id="qrModeBtn" class="btn ghost" title="QR Scan Mode">QR Scan Mode</button>
+
+        <button id="switchFrontBtn" class="btn" title="Switch to front camera" aria-label="Front camera">Front</button>
+        <button id="switchBackBtn" class="btn" title="Switch to back camera" aria-label="Back camera">Back</button>
+
+        <button id="stopBtn" class="btn danger" title="Turn off camera">Off</button>
+      </div>
+
+      <div id="previewArea" class="photo-preview" aria-live="polite" style="display:none">
+        <img id="photo" alt="Captured photo preview">
+      </div>
+
+      <div id="downloadSection" class="download-wrap" style="display:none">
+        <button id="downloadBtn" class="btn success" disabled>Download Photo</button>
+      </div>
+
+      <p id="qrResult" aria-live="polite"></p>
+      <p class="hint">If QR contains a URL it will open automatically.</p>
+    </div>
+  </div>
+
+  <footer class="note">Tip: Allow camera access and choose front/back depending on your device.</footer>
+</div>
+
+<script>
+  // State
+  let mediaStream = null;
+  let currentFacingMode = "environment"; // 'user' or 'environment'
+  let currentMode = "capture"; // 'capture' or 'qr'
+  let capturedImage = null;
+  let scanInterval = null;
+
+  // Elements
+  const video = document.getElementById("cam");
+  const canvas = document.getElementById("canvas");
+  const photo = document.getElementById("photo");
+  const qrResult = document.getElementById("qrResult");
+  const downloadSection = document.getElementById("downloadSection");
+  const previewArea = document.getElementById("previewArea");
+
+  const snapBtn = document.getElementById("snapBtn");
+  const downloadBtn = document.getElementById("downloadBtn");
+  const stopBtn = document.getElementById("stopBtn");
+  const qrModeBtn = document.getElementById("qrModeBtn");
+  const captureModeBtn = document.getElementById("captureModeBtn");
+  const switchFrontBtn = document.getElementById("switchFrontBtn");
+  const switchBackBtn = document.getElementById("switchBackBtn");
+  const statusBadge = document.getElementById("statusBadge");
+  const statusText = document.getElementById("statusText");
+  const modeIndicator = document.getElementById("modeIndicator");
+
+  // Helpers for UI state
+  function setStatus(online, text){
+    statusText.textContent = text;
+    if(online){
+      statusBadge.classList.remove('offline');
+      statusBadge.classList.add('live');
+    } else {
+      statusBadge.classList.remove('live');
+      statusBadge.classList.add('offline');
+    }
+  }
+
+  function setMode(mode){
+    currentMode = mode;
+    modeIndicator.innerHTML = 'Mode: <strong>' + (mode === 'capture' ? 'Capture' : 'QR Scan') + '</strong>';
+    // button pressed styles
+    captureModeBtn.setAttribute('aria-pressed', mode === 'capture' ? 'true' : 'false');
+    qrModeBtn.setAttribute('aria-pressed', mode === 'qr' ? 'true' : 'false');
+
+    if(mode === 'qr'){
+      qrResult.textContent = 'Scanning for QR code...';
+      previewArea.style.display = 'none';
+      downloadSection.style.display = 'none';
+      downloadBtn.disabled = true;
+      // ensure stream is active then start scan
+      getMediaStream().then(() => startQRScan());
+    } else {
+      qrResult.textContent = '';
+      clearInterval(scanInterval);
+      downloadBtn.disabled = !capturedImage;
+      // ensure stream is active
+      getMediaStream();
+    }
+  }
+
+  // Ask for camera and start stream
+  async function getMediaStream(){
+    // stop existing
+    if(mediaStream) {
+      mediaStream.getTracks().forEach(t => t.stop());
+      mediaStream = null;
+      video.srcObject = null;
+    }
+
+    try {
+      mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { exact: currentFacingMode } },
+        audio: false
+      });
+    } catch (err) {
+      // fallback: some devices don't accept exact constraint; try loose facingMode
+      try {
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: currentFacingMode },
+          audio: false
+        });
+      } catch (err2){
+        console.error("Camera error:", err2);
+        setStatus(false, "Camera not available or permission denied");
+        alert("Camera not available or permission denied.");
+        return;
+      }
+    }
+
+    video.srcObject = mediaStream;
+    // Adjust mirror for back camera: mirror only when using front
+    if(currentFacingMode === 'user'){
+      video.style.transform = 'scaleX(-1)';
+    } else {
+      video.style.transform = 'none';
+    }
+
+    setStatus(true, 'Camera active');
+
+    // Wait for metadata so videoWidth/Height are available
+    return new Promise((resolve) => {
+      if (video.readyState >= 2) {
+        resolve();
+      } else {
+        video.addEventListener('loadedmetadata', function loaded(){
+          video.removeEventListener('loadedmetadata', loaded);
+          resolve();
+        });
+      }
+    });
+  }
+
+  // Capture photo
+  snapBtn.addEventListener('click', () => {
+    if (currentMode !== 'capture') return;
+    if (!video || !video.videoWidth) {
+      alert('Video not ready — try again.');
+      return;
+    }
+
+    const ctx = canvas.getContext('2d');
+    // maintain orientation & size
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    // if front camera mirrored (scaleX), we should flip the capture so photo looks correct
+    if (currentFacingMode === 'user') {
+      ctx.save();
+      ctx.translate(canvas.width, 0);
+      ctx.scale(-1, 1);
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      ctx.restore();
+    } else {
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    }
+
+    capturedImage = canvas.toDataURL('image/png', 0.95);
+    photo.src = capturedImage;
+    previewArea.style.display = 'flex';
+    downloadSection.style.display = 'flex';
+    downloadBtn.disabled = false;
+  });
+
+  // Download photo
+  downloadBtn.addEventListener('click', () => {
+    if(!capturedImage) return;
+    const a = document.createElement('a');
+    a.href = capturedImage;
+    a.download = 'mysidhi.png';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  });
+
+  // Stop camera
+  stopBtn.addEventListener('click', () => {
+    if(mediaStream){
+      mediaStream.getTracks().forEach(track => track.stop());
+      mediaStream = null;
+      video.srcObject = null;
+      clearInterval(scanInterval);
+      setStatus(false, 'Camera Off');
+      setTimeout(()=> alert('Camera turned off.'), 10);
+    } else {
+      setStatus(false, 'Camera Off');
+    }
+  });
+
+  // Switch front/back
+  switchFrontBtn.addEventListener('click', () => {
+    currentFacingMode = 'user';
+    getMediaStream();
+  });
+  switchBackBtn.addEventListener('click', () => {
+    currentFacingMode = 'environment';
+    getMediaStream();
+  });
+
+  // Mode buttons
+  qrModeBtn.addEventListener('click', () => setMode('qr'));
+  captureModeBtn.addEventListener('click', () => setMode('capture'));
+
+  // QR scanning
+  function startQRScan(){
+    clearInterval(scanInterval);
+    // safety: ensure video ready
+    if (!video || !video.videoWidth) {
+      // try again after a brief delay
+      scanInterval = setTimeout(startQRScan, 300);
+      return;
+    }
+
+    const ctx = canvas.getContext('2d');
+    scanInterval = setInterval(() => {
+      if (!video.videoWidth) return;
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      // if front camera mirrored, flip before reading QR
+      if (currentFacingMode === 'user') {
+        ctx.save();
+        ctx.translate(canvas.width, 0);
+        ctx.scale(-1, 1);
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        ctx.restore();
+      } else {
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      }
+
+      try {
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const qr = jsQR(imageData.data, imageData.width, imageData.height);
+        if (qr) {
+          qrResult.textContent = 'QR Code: ' + qr.data;
+          clearInterval(scanInterval);
+          // open links automatically
+          if (qr.data && (qr.data.startsWith('http://') || qr.data.startsWith('https://'))) {
+            // small delay for UX
+            setTimeout(() => window.open(qr.data, '_blank'), 150);
+          }
+        }
+      } catch (err) {
+        // Some browsers may throw on getImageData if cross-origin or resource issues
+        console.error('QR read error:', err);
+      }
+    }, 400);
+  }
+
+  // Initialize default camera on load
+  (async function init(){
+    setMode('capture');     // default mode
+    await getMediaStream().catch(()=>{ /* handled in getMediaStream */ });
+  })();
+
+  // Clean up on page unload
+  window.addEventListener('beforeunload', () => {
+    if(mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+  });
+
+  // Keyboard shortcuts (optional)
+  window.addEventListener('keydown', (e) => {
+    if (e.key === ' ') { // space = snap
+      e.preventDefault();
+      snapBtn.click();
+    } else if (e.key.toLowerCase() === 'q') {
+      qrModeBtn.click();
+    } else if (e.key.toLowerCase() === 'c') {
+      captureModeBtn.click();
+    }
+  });
+</script>
+</body>
+</html>
