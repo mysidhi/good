@@ -664,37 +664,3 @@ body {
   }
 }
 
-body {
-  font-family: Arial, sans-serif;
-}
-
-/* Popup background */
-.popup {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.6);
-}
-
-/* Popup box */
-.popup-content {
-  background: #fff;
-  width: 300px;
-  padding: 20px;
-  margin: 15% auto;
-  border-radius: 8px;
-  text-align: center;
-  position: relative;
-}
-
-/* Close button */
-.close {
-  position: absolute;
-  top: 8px;
-  right: 12px;
-  font-size: 22px;
-  cursor: pointer;
-}
