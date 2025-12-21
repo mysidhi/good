@@ -1,0 +1,41 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+/* Overlay */
+.popup {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+}
+
+/* Popup animation */
+.popup-box {
+  background: white;
+  padding: 25px;
+  width: 320px;
+  border-radius: 10px;
+  text-align: center;
+  transform: scale(0.7);
+  opacity: 0;
+  animation: popupAnim 0.4s ease forwards;
+}
+
+@keyframes popupAnim {
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Close button */
+.close {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  font-size: 22px;
+  cursor: pointer;
+}
