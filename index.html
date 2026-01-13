@@ -1,560 +1,163 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="https://image2url.com/images/1765216796639-cab13516-7bdb-4969-927a-c50503dff2a6.png">
-
-    <meta charset="UTF-8">
-    <title>Work with My Sidhi</title>
- 
-    <!-- Responsive Meta Tag -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <!-- App theme color (status bar color on mobile) -->
-  <meta name="theme-color" content="#1A1919" />
-    <!-- (Optional) External CSS
-    <link rel="stylesheet" href="style.css">
-    -->
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-        }
-
-        .main {
-            min-height: 100vh;
-            width: 100%;
-            background: linear-gradient(
-                to top,
-                rgba(0, 0, 0, 0.5) 50%,
-                rgba(0, 0, 0, 0.5) 50%
-            ), url("https://images.unsplash.com/photo-1545486332-9e0999c535b2");
-            background-position: center;
-            background-size: cover;
-            color: #fff;
-        }
-
-        /* ===== NAVBAR ===== */
-        .navbar {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap; /* important for small screens */
-        }
-
-        .icon .logo {
-            color: #ff7200;
-            font-size: 40px;
-            font-weight: bold;
-        }
-
-        .menu {
-            display: flex;
-            align-items: center;
-        }
-
-        .menu ul {
-            list-style: none;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .menu ul li a {
-            text-decoration: none;
-            color: #fff;
-            font-weight: bold;
-            font-size: 14px;
-            transition: 0.3s;
-        }
-
-        .menu ul li a:hover {
-            color: #ff7200;
-        }
-
-        .search {
-            display: flex;
-            align-items: center;
-            gap: 0;
-            margin-top: 10px;
-        }
-
-        .srch {
-            font-family: 'Times New Roman';
-            width: 200px;
-            height: 40px;
-            background: transparent;
-            border: 1px solid #ff7200;
-            color: #fff;
-            font-size: 16px;
-            padding: 0 10px;
-            border-right: none;
-            border-top-left-radius: 5px;
-            border-bottom-left-radius: 5px;
-        }
-
-        .srch::placeholder {
-            color: #ddd;
-        }
-
-        .btn {
-            width: 100px;
-            height: 40px;
-            background: #ff7200;
-            border: 1px solid #ff7200;
-            color: #fff;
-            font-size: 15px;
-            border-top-right-radius: 5px;
-            border-bottom-right-radius: 5px;
-            cursor: pointer;
-            transition: 0.2s ease;
-        }
-
-        .btn:hover {
-            color: #000;
-            background: #ffa24a;
-        }
-
-        .btn:focus,
-        .srch:focus {
-            outline: none;
-        }
-
-        /* ===== MAIN CONTENT ===== */
-        .content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px 60px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap; /* text + form one below other on small */
-            gap: 40px;
-        }
-
-        .content-text {
-            flex: 1 1 300px;
-            min-width: 260px;
-        }
-
-        .content h1 {
-            font-family: 'Times New Roman', serif;
-            font-size: 42px;
-            letter-spacing: 2px;
-            margin-bottom: 20px;
-        }
-
-        .content h1 span {
-            color: #ff7200;
-            font-size: 48px;
-        }
-
-        .content .par {
-            font-size: 15px;
-            line-height: 1.6;
-            margin-bottom: 25px;
-        }
-
-        .cn {
-            width: 160px;
-            height: 40px;
-            background: #ff7200;
-            border: none;
-            font-size: 16px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: 0.3s ease;
-        }
-
-        .cn a {
-            text-decoration: none;
-            color: #000;
-            font-weight: bold;
-        }
-
-        .cn:hover {
-            background-color: #fff;
-        }
-        /* Why Choose Us Section */
-.why-choose-us {
-  padding: 60px 20px;
-  background: url('https://images.unsplash.com/photo-1545091741-2231068f3478') center/cover no-repeat;
-  font-family: 'Poppins', sans-serif;
-}
-
-/* Frosted Glass Container */
-.wc-container {
-  max-width: 1100px;
-  margin: 0 auto;
-  text-align: center;
-
-  background: rgba(255, 255, 255, 0.12);   /* transparent */
-  backdrop-filter: blur(12px);             /* blur effect */
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 20px;
-  padding: 40px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
-}
-
-.wc-container h2 {
-  font-size: 32px;
-  margin-bottom: 10px;
-  font-weight: 700;
-  color: #fff;
-}
-
-.wc-subtitle {
-  font-size: 15px;
-  color: #eee;
-  margin-bottom: 35px;
-}
-
-.wc-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
-}
-
-/* Glass Cards */
-.wc-item {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-radius: 15px;
-  padding: 20px 18px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  text-align: left;
-}
-
-.wc-item h3 {
-  font-size: 18px;
-  margin-bottom: 8px;
-  font-weight: 600;
-  color: #fff;
-}
-
-.wc-item p {
-  font-size: 14px;
-  color: #f0f0f0;
-  line-height: 1.6;
-}
-
-/* Responsive */
-@media (min-width: 768px) {
-  .wc-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .wc-container h2 {
-    font-size: 36px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .wc-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-
-        /* ===== LOGIN FORM ===== */
-        .form {
-            flex: 0 1 320px;
-            max-width: 100%;
-            background: linear-gradient(
-                to top,
-                rgba(0, 0, 0, 0.8) 50%,
-                rgba(0, 0, 0, 0.8) 50%
-            );
-            border-radius: 10px;
-            padding: 25px 20px 30px;
-        }
-
-        .form h2 {
-            width: 100%;
-            text-align: center;
-            color: #ff7200;
-            font-size: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            padding: 8px 0;
-        }
-
-        .form input {
-            width: 100%;
-            height: 35px;
-            background: transparent;
-            border-bottom: 1px solid #ff7200;
-            border-top: none;
-            border-right: none;
-            border-left: none;
-            color: #fff;
-            font-size: 15px;
-            letter-spacing: 1px;
-            margin-top: 25px;
-        }
-
-        .form input:focus {
-            outline: none;
-        }
-
-        .btnn {
-            width: 100%;
-            height: 40px;
-            background: #ff7200;
-            border: none;
-            margin-top: 30px;
-            font-size: 18px;
-            border-radius: 10px;
-            cursor: pointer;
-            color: #fff;
-            transition: 0.3s ease;
-        }
-
-        .btnn:hover {
-            background: #fff;
-            color: #ff7200;
-        }
-
-        .btnn a {
-            text-decoration: none;
-            color: #000;
-            font-weight: bold;
-        }
-
-        .form .link {
-            font-size: 15px;
-            text-align: center;
-            padding-top: 20px;
-        }
-
-        .form .link a {
-            text-decoration: none;
-            color: #ff7200;
-        }
-
-        .liw {
-            padding-top: 15px;
-            padding-bottom: 10px;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        .icons {
-            text-align: center;
-        }
-
-        .icons a {
-            text-decoration: none;
-            color: #fff;
-        }
-
-        .icons ion-icon {
-            font-size: 26px;
-            margin: 0 5px;
-            transition: 0.3s ease;
-        }
-
-        .icons ion-icon:hover {
-            color: #ff7200;
-        }
-
-        /* ===== RESPONSIVE BREAKPOINTS ===== */
-
-        /* Tablets & small laptops */
-        @media (max-width: 992px) {
-            .navbar {
-                justify-content: center;
-                gap: 10px;
-            }
-
-            .search {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .content {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .content h1 {
-                font-size: 36px;
-            }
-
-            .content h1 span {
-                font-size: 40px;
-            }
-        }
-
-        /* Mobiles */
-        @media (max-width: 600px) {
-            .navbar {
-                padding: 10px 15px;
-            }
-
-            .icon .logo {
-                font-size: 30px;
-            }
-
-            .menu ul {
-                justify-content: center;
-                gap: 12px;
-            }
-
-            .menu ul li a {
-                font-size: 12px;
-            }
-
-            .search {
-                flex-direction: row;
-                justify-content: center;
-            }
-
-            .srch {
-                width: 60%;
-                font-size: 14px;
-            }
-
-            .btn {
-                width: auto;
-                padding: 0 15px;
-            }
-
-            .content {
-                padding: 30px 15px 40px;
-            }
-
-            .content h1 {
-                font-size: 30px;
-            }
-
-            .content h1 span {
-                font-size: 32px;
-            }
-
-            .form {
-                padding: 20px 15px 25px;
-            }
-        }
-
-    </style>
-     <!-- Favicon -->
-</head>
-<body>
-
-<div class="main">
-
-    <div class="navbar">
-        <div class="icon">
-            <h1 class="logo">Work-Space</h1>
+<div class="page-wrap">
+  <header class="page-header">
+
+    <nav>
+      <h1>CPC | Travel</h1>
+      <ul>
+        <li>About Us</li>
+        <li>Contact Us</li>
+        <li id="burger">
+          <span></span>
+          <span></span>
+          <span></span>
+        </li>
+      </ul>
+    </nav>
+
+    <main>
+      <article id="hero-1" style="--i: 5">
+        <div class="hero-info">
+          <h2>Travel the</h2>
+          <h1>World</h1>
+          <h3>Pragser Wildsee, Italy</h3>
         </div>
+        <div class="hero-image hi-1"></div>
+      </article>
 
-        <div class="menu">
-            <ul>
-                <li><a href="#"></a></li>
-                <li><a href="#">ABOUT</a></li>
-                <li><a href="https://work.mysidhi.com/timeline">TIMELINE</a></li>
-                <li><a href="motiongraphic">DESIGN</a></li>
-                <li><a href="scan">SCAN</a></li>
+      <article id="hero-2" style="--i: 4">
+        <div class="hero-info">
+          <h2>Savour the</h2>
+          <h1>Journey</h1>
+          <h3>Marignier, France</h3>
+        </div>
+        <div class="hero-image hi-2"></div>
+
+      </article>
+
+      <article id="hero-3" style="--i: 3">
+        <div class="hero-info">
+          <h2>Expand Your</h2>
+          <h1>Horizons</h1>
+          <h3>Hooker Valley Track, New Zealand</h3>
+        </div>
+        <div class="hero-image hi-3"></div>
+
+      </article>
+
+      <article id="hero-4" style="--i: 2">
+        <div class="hero-info">
+          <h2>Explore and</h2>
+          <h1>Reflect</h1>
+          <h3>Dolmites, Italy</h3>
+        </div>
+        <div class="hero-image hi-4"></div>
+
+      </article>
+
+      <article id="hero-5" style="--i: 1">
+        <div class="hero-info">
+          <h2>Change Your</h2>
+          <h1>Perspective</h1>
+          <h3>Phuket, Thailand</h3>
+        </div>
+        <div class="hero-image hi-5"></div>
+      </article>
+    </main>
+
+  </header>
+
+  <section>
+    <ul class="level-1">
+      <li>
+        <h3>Destinations</h3>
+        <ul class="level-2">
+          <li>
+            <p>Asia</p>
+            <ul class="level-3">
+              <li>Bali</li>
+              <li>Cambodia</li>
+              <li>Georgia</li>
+              <li>India</li>
+              <li>Indonesia</li>
+              <li>Laos</li>
+              <li>Malaysia</li>
+              <li>Maldives</li>
+              <li>Myanmar</li>
+              <li>Philippines</li>
+              <li>Singapore</li>
+              <li>Sri Lanka</li>
+              <li>Thailand</li>
+              <li>Uzbekistan</li>
+              <li>Vietnam</li>
             </ul>
-        </div>
+          </li>
+          <li>
+            <p>Europe</p>
+            <ul class="level-3">
+              <li>Czech Republic</li>
+              <li>France</li>
+              <li>Georgia</li>
+              <li>Greece</li>
+              <li>Hungary</li>
+              <li>Iceland</li>
+              <li>Italy</li>
+              <li>Malta</li>
+              <li>Netherlands</li>
+              <li>Poland</li>
+              <li>Portugal</li>
+              <li>Spain</li>
+              <li>Turkey</li>
+            </ul>
+          </li>
+          <li>
+            <p>Africa</p>
+            <ul class="level-3">
+              <li>Egypt</li>
+              <li>Maurtius</li>
+              <li>Morocco</li>
+            </ul>
+          </li>
+          <li>
+            <p>Middle East</p>
+            <ul class="level-3">
+              <li>Egypt</li>
+              <li>Jordan</li>
+              <li>Oman</li>
+              <li>Turkey</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <h3>Travel Tips</h3>
+        <ul>
+          <li>Going on a trip</li>
+          <li>Travel Insurance</li>
+          <li>Working abroad</li>
+          <li>Saving</li>
+          <li>Instagram tips</li>
+        </ul>
+        <p><small>More tips...</small></p>
+      </li>
+      <li>
+        <h3>Resources</h3>
+        <ul>
+          <li>Personalised travel advice</li>
+          <li>Where we book our travels</li>
+          <li>Become a booking agent</li>
+        </ul>
+        <p><small>More resources...</small></p>
+      </li>
+      <li>
+        <h3>About Us</h3>
+        <ul>
+          <li>Our story</li>
+          <li>Work with us</li>
+          <li>Instagram</li>
+          <li>YouTube</li>
+        </ul>
+      </li>
+    </ul>
+  </section>
 
-        <div class="search">
-            <input class="srch" type="search" placeholder="Type to text">
-            <button class="btn">Search</button>
-        </div>
-    </div>
-
-    <div class="content">
-        <div class="content-text">
-            <h1>Web Design & <br><span>Marketing</span> <br>Service</h1>
-            <p class="par">
-             Let’s build something amazing together.
-Contact us today to get your website and marketing strategy!   
-            </p>
-
-            <button class="cn"><a href="collection.html">JOIN US</a></button>
-        </div>
-        <div class="form">
-            <h2>Login </h2>
-            <input type="email" placeholder="Enter Email ">
-            <input type="password" placeholder="Enter Password ">
-            <button class="btnn"><a href="#">Login</a></button>
-
-            <p class="link">Don't have an account<br>
-                <a href="signup.html">Sign up</a> 
-            </p>
-            <p class="liw">Log in with</p>
-
-            <div class="icons">
-                <a href="#"><ion-icon name="logo-facebook"></ion-icon></a>
-                <a href="#"><ion-icon name="logo-instagram"></ion-icon></a>
-                <a href="#"><ion-icon name="logo-linkedin"></ion-icon></a>
-                <a href="#"><ion-icon name="logo-youtube"></ion-icon></a>
-            </div>
-        </div>
-    </div>
-
-<script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
-     <!-- Why Choose Us Section -->
-<section class="why-choose-us">
-  <div class="wc-container">
-    <h2>Why Choose Us?</h2>
-    <p class="wc-subtitle">
-      We deliver creative, result-driven solutions for your business growth.
-    </p>
-
-    <div class="wc-grid">
-      <div class="wc-item">
-        <h3>Professional & Creative Team</h3>
-        <p>
-          We combine creativity with technical expertise to deliver modern and impactful solutions.
-        </p>
-      </div>
-
-      <div class="wc-item">
-        <h3>Affordable Pricing</h3>
-        <p>
-          High-quality services at budget-friendly prices — perfect for startups and growing businesses.
-        </p>
-      </div>
-
-      <div class="wc-item">
-        <h3>100% Client Satisfaction</h3>
-        <p>
-          Your success is our priority. We work closely with you to ensure every project meets your expectations.
-        </p>
-      </div>
-
-      <div class="wc-item">
-        <h3>On-Time Delivery</h3>
-        <p>
-          We value your time. Every project is delivered within the promised timeline.
-        </p>
-      </div>
-
-      <div class="wc-item">
-        <h3>Full Support & Maintenance</h3>
-        <p>
-          From launch to long-term growth, we provide ongoing support to keep everything running smoothly.
-        </p>
-      </div>
-      
-    </div>
-  </div>
-   
-</section>
-     
-</body>
-</html>
+</div>
