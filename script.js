@@ -1,170 +1,100 @@
+let burger = document.getElementById("burger");
+let overlay = document.querySelector("section");
+let heroImage = document.querySelector(".hero-image");
+let showMenu = false;
+let del = 3;
+let i = 1;
 
-setTimeout((5) => {
-  document.getElementById("popup").style.display = "flex";
-}, 5000);
+let tl = gsap.timeline({
+  repeat: -1,
+  yoyo: true,
+  ease: "expo.out"
+});
 
-function closePopup() {
-  document.getElementById("popup").style.display = "none";
+overlay.style.display = "none";
+
+burger.addEventListener("click", (e) => {
+  showMenu = !showMenu;
+  if (showMenu) {
+    burger.classList.add("active");
+    overlay.style.display = "block";
+    gsap.to(overlay, 1, {
+      clipPath: "polygon(0% 0%, 100% 0, 100% 100%, 0% 100%)",
+      ease: "expo.in"
+    });
+  } else {
+    burger.classList.remove("active");
+    gsap.to(overlay, 1, {
+      clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)",
+      ease: "expo.out",
+      onComplete: () => (overlay.style.display = "none")
+    });
+  }
+});
+
+gsap.set(["#hero-1 h2, #hero-1 h1, #hero-1 h3"], {
+  clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)"
+});
+
+gsap.set(
+  [
+    `#hero-2 h2, #hero-3 h2, #hero-4 h2, #hero-5 h2,
+     #hero-2 h1, #hero-3 h1, #hero-4 h1, #hero-5 h1,
+     #hero-2 h3, #hero-3 h3, #hero-4 h3, #hero-5 h3`
+  ],
+  {
+    clipPath: "polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)"
+  }
+);
+
+while (i < 5) {
+  tl.to(`#hero-${i} h2`, 0.9, {
+    clipPath: "polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)",
+    delay: del
+  })
+    .to(
+      `#hero-${i} h1`,
+      0.9,
+      {
+        clipPath: "polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)"
+      },
+      "-=0.3"
+    )
+    .to(
+      `#hero-${i} h3`,
+      0.9,
+      {
+        clipPath: "polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)"
+      },
+      "-=0.3"
+    )
+    .to(
+      `#hero-${i} .hi-${i}`,
+      0.7,
+      {
+        clipPath: "polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)"
+      },
+      "-=1"
+    )
+    .to(`#hero-${i + 1} h2`, 0.9, {
+      clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)"
+    })
+    .to(
+      `#hero-${i + 1} h1`,
+      0.9,
+      {
+        clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)"
+      },
+      "-=0.3"
+    )
+    .to(
+      `#hero-${i + 1} h3`,
+      0.9,
+      {
+        clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)"
+      },
+      "-=0.3"
+    );
+
+  i++;
 }
-
-// fade animation when scrolling
-const items = document.querySelectorAll("[data-anim]");
-
-function animate() {
-  items.forEach(el=>{
-    const rect = el.getBoundingClientRect().top;
-    if(rect < window.innerHeight - 80){
-      el.classList.add("active");
-    }
-  });
-}
-
-window.addEventListener("scroll", animate);
-animate(); // run once on load
-
-const teamMembers = [
-	{ name: "Luffy", role: "Founder" },
-	{ name: "Monkey D. Luffy", role: "Creative Director" },
-	{ name: "Luffy chan", role: "Lead Developer" },
-	{ name: "Lucy", role: "UX Designer" },
-	{ name: "Luffy kun", role: "Marketing Manager" },
-	{ name: "Monkey chan", role: "Product Manager" }
-];
-
-const cards = document.querySelectorAll(".card");
-const dots = document.querySelectorAll(".dot");
-const memberName = document.querySelector(".member-name");
-const memberRole = document.querySelector(".member-role");
-const upArrows = document.querySelectorAll(".nav-arrow.up");
-const downArrows = document.querySelectorAll(".nav-arrow.down");
-let currentIndex = 0;
-let isAnimating = false;
-
-function updateCarousel(newIndex) {
-	if (isAnimating) return;
-	isAnimating = true;
-
-	currentIndex = (newIndex + cards.length) % cards.length;
-
-	cards.forEach((card, i) => {
-		const offset = (i - currentIndex + cards.length) % cards.length;
-
-		card.classList.remove(
-			"center",
-			"up-1",
-			"up-2",
-			"down-1",
-			"down-2",
-			"hidden"
-		);
-
-		if (offset === 0) {
-			card.classList.add("center");
-		} else if (offset === 1) {
-			card.classList.add("down-1");
-		} else if (offset === 2) {
-			card.classList.add("down-2");
-		} else if (offset === cards.length - 1) {
-			card.classList.add("up-1");
-		} else if (offset === cards.length - 2) {
-			card.classList.add("up-2");
-		} else {
-			card.classList.add("hidden");
-		}
-	});
-
-	dots.forEach((dot, i) => {
-		dot.classList.toggle("active", i === currentIndex);
-	});
-
-	memberName.style.opacity = "0";
-	memberRole.style.opacity = "0";
-
-	setTimeout(() => {
-		memberName.textContent = teamMembers[currentIndex].name;
-		memberRole.textContent = teamMembers[currentIndex].role;
-		memberName.style.opacity = "1";
-		memberRole.style.opacity = "1";
-	}, 300);
-
-	setTimeout(() => {
-		isAnimating = false;
-	}, 800);
-}
-
-upArrows.forEach(arrow => {
-	arrow.addEventListener("click", () => {
-		updateCarousel(currentIndex - 1);
-	});
-});
-
-downArrows.forEach(arrow => {
-	arrow.addEventListener("click", () => {
-		updateCarousel(currentIndex + 1);
-	});
-});
-
-dots.forEach((dot, i) => {
-	dot.addEventListener("click", () => {
-		updateCarousel(i);
-	});
-});
-
-cards.forEach((card, i) => {
-	card.addEventListener("click", () => {
-		updateCarousel(i);
-	});
-});
-
-document.addEventListener("keydown", (e) => {
-	if (e.key === "ArrowUp") {
-		updateCarousel(currentIndex - 1);
-	} else if (e.key === "ArrowDown") {
-		updateCarousel(currentIndex + 1);
-	}
-});
-
-let touchStartX = 0;
-let touchEndX = 0;
-let scrollTimeout;
-let isScrolling = false;
-
-// Scroll event listener
-//if u wnat u can timer to disappear that bottom right scroll button - by gopi
-	
-	
-
-// Add scroll indicator
-function createScrollIndicator() {
-	const indicator = document.createElement('div');
-	indicator.className = 'scroll-indicator';
-	indicator.innerHTML = 'scroll';
-	document.body.appendChild(indicator);
-}
-
-// Initialize scroll indicator
-createScrollIndicator();
-
-document.addEventListener("touchstart", (e) => {
-	touchStartX = e.changedTouches[0].screenY;
-});
-
-document.addEventListener("touchend", (e) => {
-	touchEndX = e.changedTouches[0].screenY;
-	handleSwipe();
-});
-
-function handleSwipe() {
-	const swipeThreshold = 50;
-	const diff = touchStartX - touchEndX;
-
-	if (Math.abs(diff) > swipeThreshold) {
-		if (diff > 0) {
-			updateCarousel(currentIndex + 1);
-		} else {
-			updateCarousel(currentIndex - 1);
-		}
-	}
-}
-
-updateCarousel(0);
