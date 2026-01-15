@@ -1,100 +1,78 @@
-let burger = document.getElementById("burger");
-let overlay = document.querySelector("section");
-let heroImage = document.querySelector(".hero-image");
-let showMenu = false;
-let del = 3;
-let i = 1;
 
-let tl = gsap.timeline({
-  repeat: -1,
-  yoyo: true,
-  ease: "expo.out"
+document.addEventListener('DOMContentLoaded', () => {
+	const nav = document.querySelector('nav > ul');
+	const items = document.querySelectorAll('nav > ul li a');
+	let anim = null;
+	let currentActiveItem = null;
+
+	const animate = (from, to) => {
+		if (anim) clearInterval(anim);
+
+		const start = Date.now();
+		anim = setInterval(() => {
+			const p = Math.min((Date.now() - start) / 500, 1);
+			const e = 1 - Math.pow(1 - p, 3);
+
+			const x = from + (to - from) * e;
+			const y = -40 * (4 * e * (1 - e));
+			const r = 200 * Math.sin(p * Math.PI);
+
+			nav.style.setProperty('--translate-x', `${x}px`);
+			nav.style.setProperty('--translate-y', `${y}px`);
+			nav.style.setProperty('--rotate-x', `${r}deg`);
+
+			if (p >= 1) {
+				clearInterval(anim);
+				anim = null;
+				nav.style.setProperty('--translate-y', '0px');
+				nav.style.setProperty('--rotate-x', '0deg');
+			}
+		}, 16);
+	};
+
+	const getCurrentPosition = () => parseFloat(nav.style.getPropertyValue('--translate-x')) || 0;
+
+	const getItemCenter = (item) => {
+		return item.getBoundingClientRect().left + item.offsetWidth / 2 - nav.getBoundingClientRect().left - 5;
+	};
+
+	const moveToItem = (item) => {
+		const current = getCurrentPosition();
+		const center = getItemCenter(item);
+		animate(current, center);
+		nav.classList.add('show-indicator');
+	};
+
+	const setActiveItem = (item) => {
+		if (currentActiveItem) {
+			currentActiveItem.classList.remove('active');
+		}
+
+		currentActiveItem = item;
+		item.classList.add('active');
+		moveToItem(item);
+	};
+
+	const handleMouseLeave = () => {
+		if (currentActiveItem) {
+			moveToItem(currentActiveItem);
+		} else {
+			nav.classList.remove('show-indicator');
+			if (anim) clearInterval(anim);
+		}
+	};
+
+	items.forEach(item => {
+		item.addEventListener('mouseenter', () => moveToItem(item));
+		item.addEventListener('mouseleave', handleMouseLeave);
+		item.addEventListener('click', () => setActiveItem(item));
+	});
+
+	nav.addEventListener('mouseleave', handleMouseLeave);
+	
+	if (items.length > 0) {
+		setTimeout(() => {
+			setActiveItem(items[0]);
+		}, 100);
+	}
 });
-
-overlay.style.display = "none";
-
-burger.addEventListener("click", (e) => {
-  showMenu = !showMenu;
-  if (showMenu) {
-    burger.classList.add("active");
-    overlay.style.display = "block";
-    gsap.to(overlay, 1, {
-      clipPath: "polygon(0% 0%, 100% 0, 100% 100%, 0% 100%)",
-      ease: "expo.in"
-    });
-  } else {
-    burger.classList.remove("active");
-    gsap.to(overlay, 1, {
-      clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)",
-      ease: "expo.out",
-      onComplete: () => (overlay.style.display = "none")
-    });
-  }
-});
-
-gsap.set(["#hero-1 h2, #hero-1 h1, #hero-1 h3"], {
-  clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)"
-});
-
-gsap.set(
-  [
-    `#hero-2 h2, #hero-3 h2, #hero-4 h2, #hero-5 h2,
-     #hero-2 h1, #hero-3 h1, #hero-4 h1, #hero-5 h1,
-     #hero-2 h3, #hero-3 h3, #hero-4 h3, #hero-5 h3`
-  ],
-  {
-    clipPath: "polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)"
-  }
-);
-
-while (i < 5) {
-  tl.to(`#hero-${i} h2`, 0.9, {
-    clipPath: "polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)",
-    delay: del
-  })
-    .to(
-      `#hero-${i} h1`,
-      0.9,
-      {
-        clipPath: "polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)"
-      },
-      "-=0.3"
-    )
-    .to(
-      `#hero-${i} h3`,
-      0.9,
-      {
-        clipPath: "polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)"
-      },
-      "-=0.3"
-    )
-    .to(
-      `#hero-${i} .hi-${i}`,
-      0.7,
-      {
-        clipPath: "polygon(0% 0%, 0% 0%, 0% 100%, 0% 100%)"
-      },
-      "-=1"
-    )
-    .to(`#hero-${i + 1} h2`, 0.9, {
-      clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)"
-    })
-    .to(
-      `#hero-${i + 1} h1`,
-      0.9,
-      {
-        clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)"
-      },
-      "-=0.3"
-    )
-    .to(
-      `#hero-${i + 1} h3`,
-      0.9,
-      {
-        clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)"
-      },
-      "-=0.3"
-    );
-
-  i++;
-}
