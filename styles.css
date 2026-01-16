@@ -114,3 +114,43 @@ nav > ul.show-indicator::after {
 nav > ul li a:active {
 	transform: translateY(-2px);
 }
+
+
+
+@import url('https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap');
+
+html, body {
+  height: 100dvh;
+  width: 100dvw;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #222;
+  font-family: "Rubik Mono One", monospace;
+  color: #fff;
+}
+
+.standard-text {
+  font-size: 5rem;
+}
+
+.alt-container {
+  font-size: 5rem;
+  height: 6rem;
+  overflow: hidden;
+}
+
+.alt-container .word {
+  margin: 0;
+  padding:0;
+  display: flex;
+}
+
+.alt-container .word .letter {
+  display: inline-block;
+  animation: slide-steps cubic-bezier(0.25, 0.1, 0.25, 1.4) infinite; 
+
+  animation-delay: calc(var(--i) * 100ms);
+}
+
