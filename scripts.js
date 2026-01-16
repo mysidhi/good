@@ -75,3 +75,35 @@ document.addEventListener('DOMContentLoaded', () => {
 		}, 100);
 	}
 });
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const container = document.querySelector(".alt-container");
+  const words = container.querySelectorAll(".word");
+  const letters = container.querySelectorAll(".letter");
+  const stepCount = words.length - 1;
+
+  if (stepCount <= 0) return;
+  const stepPercentage = 100 / (stepCount*2);
+
+  let keyframes = `@keyframes slide-steps {\n  0% { transform: translateY(0%); }\n`;
+
+  for (let i = 0; i <= stepCount - 1; i++) {
+    const startPercent = stepPercentage + stepPercentage * i *2 ;
+    const endPercent = (stepPercentage + stepPercentage * i) * 2;
+    const position = (i+1) * -100
+
+    keyframes += `${startPercent}% { transform: translateY(${position}%); }\n`;
+    keyframes += `${endPercent}% { transform: translateY(${position}%); }\n`;
+  }
+
+  keyframes += `}`;
+
+  const style = document.createElement("style");
+  style.textContent = keyframes;
+  document.head.appendChild(style);
+  
+  letters.forEach((l) => {
+    l.style.animationDuration = stepCount*2 + "s";
+  });
+});
